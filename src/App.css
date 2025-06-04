@@ -1,0 +1,286 @@
+/* Base styles */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  line-height: 1.5;
+  background: #f4f7fb;
+  color: #1a2233;
+}
+
+body, #root {
+  height: 100vh;
+  min-height: 0;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  width: 100vw;
+  overflow: hidden;
+  background: #f4f7fb;
+}
+
+.App {
+  width: 100vw;
+  height: 100vh;
+  min-width: 0;
+  min-height: 0;
+  display: block;
+  background: #f4f7fb;
+}
+
+.App-header {
+  display: none;
+}
+
+main {
+  padding: 0;
+  margin: 0;
+  width: 100vw;
+  height: 100vh;
+  min-width: 0;
+  min-height: 0;
+  display: block;
+  overflow: hidden;
+}
+
+.home-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.modeler-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin: 30px 0;
+}
+
+.modeler-button {
+  padding: 15px 30px;
+  font-size: 1.2rem;
+  border: none;
+  border-radius: 5px;
+  background-color: #4CAF50;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modeler-button:hover {
+  background-color: #45a049;
+}
+
+.modeler-wrapper {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+/* View Mode Selection */
+.view-mode-controls {
+  background-color: #f7fafd;
+  border-bottom: 1px solid #e3eaf3;
+  padding: 10px;
+  text-align: center;
+}
+
+.view-mode-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+.view-mode-buttons button {
+  padding: 8px 16px;
+  border: 1px solid #b0b8c1;
+  background-color: #f7fafd;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.2s;
+  color: #1a2233;
+}
+
+.view-mode-buttons button:hover {
+  background-color: #e3eaf3;
+  color: #1976d2;
+  border-color: #1976d2;
+}
+
+.view-mode-buttons button.active {
+  background-color: #1976d2;
+  color: #fff;
+  border-color: #1976d2;
+}
+
+/* Split Modelers Layout */
+.split-modeler-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.modeler-toolbar {
+  display: flex;
+  padding: 10px;
+  background-color: #f0f0f0;
+  border-bottom: 1px solid #ddd;
+}
+
+.bpmn-toolbar, .condec-toolbar {
+  flex: 1;
+  display: flex;
+  align-items: center;
+}
+
+.bpmn-toolbar {
+  border-right: 1px solid #ddd;
+  padding-right: 10px;
+}
+
+.condec-toolbar {
+  padding-left: 10px;
+}
+
+.bpmn-toolbar h2, .condec-toolbar h2 {
+  margin: 0 10px 0 0;
+  font-size: 1.2rem;
+}
+
+.modeler-toolbar button, .import-button {
+  margin-right: 8px;
+  padding: 6px 12px;
+  background-color: #4285f4;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.import-button {
+  display: inline-block;
+  background-color: #34a853;
+}
+
+.modeler-toolbar button:hover, .import-button:hover {
+  opacity: 0.9;
+}
+
+.modelers-container {
+  display: flex;
+  height: calc(100vh - 50px); /* Adjust based on header height */
+  border: 1px solid #e3eaf3;
+  background: #f4f7fb;
+}
+
+.modeler-half {
+  height: 100%;
+  overflow: auto;
+  position: relative; /* Needed for absolute positioning of palettes */
+  background: #fff;
+}
+
+/* Split view (default) */
+.modelers-container.split .modeler-half {
+  width: 50%;
+}
+
+.modelers-container.split .modeler-half:first-child {
+  border-right: 1px solid #ccc;
+}
+
+/* BPMN only view */
+.modelers-container.bpmn .modeler-half:nth-child(2) {
+  display: none; /* Hide ConDec */
+}
+
+.modelers-container.bpmn .modeler-half:first-child {
+  width: 100%; /* Expand BPMN */
+  border-right: none;
+}
+
+/* ConDec only view */
+.modelers-container.condec .modeler-half:first-child {
+  display: none; /* Hide BPMN */
+}
+
+.modelers-container.condec .modeler-half:nth-child(2) {
+  width: 100%; /* Expand ConDec */
+}
+
+.hidden {
+  display: none !important;
+}
+
+.modeler-half {
+  flex: 1; /* Default flex for split view */
+  display: flex; /* Use flex for internal layout */
+  flex-direction: column; /* Stack elements vertically */
+  height: 100%;
+  position: relative;
+  overflow: hidden; /* Prevent content overflow */
+}
+
+/* Add border only in split view */
+.modelers-container.split .modeler-half:first-child {
+  border-right: 1px solid #ddd;
+}
+
+.canvas {
+  flex: 1;
+  height: 100%;
+  background-color: #fff;
+}
+
+/* Properties panel styles */
+.properties-panel {
+  width: 250px;
+  overflow-y: auto;
+  border-left: 1px solid #e3eaf3;
+  background-color: #f7fafd;
+  padding: 10px;
+}
+
+.properties-panel-header h3 {
+  margin-top: 0;
+  border-bottom: 1px solid #e3eaf3;
+  padding-bottom: 8px;
+  font-size: 1rem;
+  color: #183153;
+}
+
+.property-row {
+  margin-bottom: 8px;
+  display: flex;
+}
+
+.property-label {
+  flex: 1;
+  font-weight: bold;
+  color: #183153;
+}
+
+.property-value {
+  flex: 2;
+}
+
+.property-value input {
+  width: 100%;
+  padding: 4px;
+  border: 1px solid #b0b8c1;
+  background: #fff;
+  color: #1a2233;
+}

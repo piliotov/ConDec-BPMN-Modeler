@@ -1,0 +1,96 @@
+@startuml ConDecModeler_Essential_Architecture
+!theme plain
+skinparam backgroundColor #FFFFFF
+skinparam packageStyle rectangle
+skinparam componentStyle uml2
+skinparam linetype ortho
+skinparam component {
+  BackgroundColor lightblue
+  BorderColor black
+}
+
+title ConDec Modeler - Essential Architecture
+
+package "User Interface" {
+  [Landing Page] as Landing
+  [Split View] as SplitView
+  [Edit Menus] as Menus
+}
+
+package "Core Application" {
+  [ConDec Modeler] as ConDec
+  [BPMN Modeler] as BPMN
+}
+
+package "Rendering" {
+  [SVG Canvas] as Canvas
+  [Node/Relation Renderers] as Renderers
+}
+
+package "Business Logic" {
+  [Diagram Engine] as Engine
+  [Constraint Validation] as Validation
+}
+
+package "Data Management" {
+  [State Manager] as State
+  [Import/Export] as IO
+}
+
+package "External" {
+  [React] as React
+  [BPMN.js] as BpmnLib
+}
+
+Landing --> ConDec : navigate
+SplitView --> ConDec : contains
+SplitView --> BPMN : contains
+
+ConDec --> State : manages
+ConDec --> Canvas : renders
+ConDec --> Engine : operates
+
+Canvas --> Renderers : delegates
+Engine --> Validation : validates
+State --> IO : persists
+
+Menus --> ConDec : commands
+BPMN --> BpmnLib : uses
+ConDec --> React : built with
+
+note right of ConDec
+  **Central Controller**
+  Orchestrates entire application:
+  - User interactions
+  - State management  
+  - Diagram operations
+  - Canvas coordination
+end note
+
+note right of Engine
+  **Domain Logic**
+  Core business rules:
+  - 22+ relation types
+  - Constraint checking
+  - Node/relation operations
+  - Data validation
+end note
+
+note right of Canvas
+  **Visualization**
+  Interactive SVG rendering:
+  - Real-time updates
+  - Drag & drop
+  - Multi-selection
+  - Visual feedback
+end note
+
+note right of IO
+  **Data Layer**
+  Multiple format support:
+  - XML, JSON, TXT
+  - Layout preservation
+  - Cross-platform compatibility
+end note
+
+@enduml

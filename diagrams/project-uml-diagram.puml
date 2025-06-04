@@ -1,0 +1,367 @@
+@startuml
+!theme plain
+skinparam backgroundColor #FFFFFF
+skinparam classAttributeIconSize 0
+skinparam classFontSize 10
+skinparam packageFontSize 12
+
+title ConDec Modeler - Detailed React Application Architecture
+
+package "Root Application" {
+  class App {
+    - loadedFile: File
+    + render(): JSX.Element
+    + handleFileLoad(file: File): void
+    + routeToModeler(): void
+  }
+  
+  class "index.js" as IndexJS {
+    + ReactDOM.render(): void
+    + setupServiceWorker(): void
+  }
+}
+
+package "Main Views" {
+  class LandingPage {
+    - showUpload: boolean
+    + handleFileUpload(file: File): void
+    + navigateToModeler(): void
+    + render(): JSX.Element
+  }
+  
+  class SplitModelers {
+    - splitPosition: number
+    - leftWidth: string
+    - rightWidth: string
+    + handleSplitResize(position: number): void
+    + render(): JSX.Element
+  }
+}
+
+package "Core Modelers" {
+  class ConDecModeler {
+    - diagram: Object
+    - selectedElement: Object
+    - draggedElement: Object
+    - newRelation: Object
+    - mousePosition: {x: number, y: number}
+    - undoStack: Array
+    - mode: string
+    - editNodePopup: Object
+    - editNodePopupPos: {x: number, y: number}
+    - zoom: number
+    - selectionBox: Object
+    - isPanning: boolean
+    - canvasOffset: {x: number, y: number}
+    - multiSelectedElements: Object
+    - naryStartNode: Object
+    - hologramNodePosition: Object
+    + handleNodeDrag(nodeId: string, position: Object): void
+    + handleNodeSelect(node: Object): void
+    + handleRelationCreate(source: string, target: string): void
+    + handleUndo(): void
+    + handleRedo(): void
+    + exportDiagram(format: string): string
+    + importDiagram(data: string, format: string): void
+    + handleCanvasClick(event: Event): void
+    + handleModeChange(newMode: string): void
+    + saveToLocalStorage(): void
+    + loadFromLocalStorage(): void
+    + render(): JSX.Element
+  }
+  
+  class BpmnModeler {
+    - bpmnViewer: Object
+    - xml: string
+    + importXML(xml: string): void
+    + exportXML(): string
+    + render(): JSX.Element
+  }
+}
+
+package "Canvas and Rendering" {
+  class ConDecCanvas {
+    - svgRef: RefObject
+    - alignmentGuides: {x: number, y: number}
+    - connectFromNodeMenu: Object
+    - relationCreationState: Object
+    - draggedDiamond: Object
+    - nodeSizes: Object
+    - lassoStart: Object
+    - lassoBox: Object
+    - multiDragStart: Object
+    + handleNodeSize(nodeId: string, size: Object): void
+    + handlePanStart(event: Event): void
+    + handlePanMove(event: Event): void
+    + handlePanEnd(event: Event): void
+    + handleLassoStart(event: Event): void
+    + handleLassoMove(event: Event): void
+    + handleLassoEnd(event: Event): void
+    + handleNodeDragStart(node: Object, event: Event): void
+    + handleNodeDrag(node: Object, event: Event): void
+    + handleNodeDragEnd(node: Object, event: Event): void
+    + handleRelationPointDrag(relation: Object, event: Event): void
+    + render(): JSX.Element
+  }
+  
+  class ConDecNode {
+    - editing: boolean
+    - editValue: string
+    - inputRef: RefObject
+    - textRef: RefObject
+    + isConstraintViolated(): boolean
+    + handleDoubleClick(): void
+    + handleEditStart(): void
+    + handleEditEnd(): void
+    + handleKeyPress(event: KeyboardEvent): void
+    + calculateSize(): Object
+    + render(): JSX.Element
+  }
+  
+  class ConDecRelation {
+    - waypoints: Array
+    - markers: Object
+    + calculatePath(): string
+    + handlePointDrag(index: number, position: Object): void
+    + isSelected(): boolean
+    + render(): JSX.Element
+  }
+  
+  class NaryRelation {
+    - diamond: Object
+    - connectedNodes: Array
+    + handleDiamondDrag(position: Object): void
+    + addConnection(nodeId: string): void
+    + removeConnection(nodeId: string): void
+    + render(): JSX.Element
+  }
+}
+
+package "UI Components" {
+  class NodeEditMenu {
+    - selectedNode: Object
+    - position: {x: number, y: number}
+    - constraints: Array
+    + handleConstraintChange(constraint: string): void
+    + handleConstraintValueChange(value: number): void
+    + handleNameChange(name: string): void
+    + handleDelete(): void
+    + render(): JSX.Element
+  }
+  
+  class RelationEditMenu {
+    - selectedRelation: Object
+    - position: {x: number, y: number}
+    - relationTypes: Array
+    + handleTypeChange(type: string): void
+    + handleDelete(): void
+    + render(): JSX.Element
+  }
+  
+  class NaryRelationEditMenu {
+    - selectedNaryRelation: Object
+    - position: {x: number, y: number}
+    + handleTypeChange(type: string): void
+    + handleNodeAdd(nodeId: string): void
+    + handleNodeRemove(nodeId: string): void
+    + handleDelete(): void
+    + render(): JSX.Element
+  }
+  
+  class FloatingNodeMenu {
+    - position: {x: number, y: number}
+    - visible: boolean
+    - selectedNode: Object
+    + handleAppendActivity(): void
+    + handleStartConnection(): void
+    + handleDelete(): void
+    + render(): JSX.Element
+  }
+}
+
+package "Utility Modules" {
+  class nodeUtils {
+    + handleNodeRename(nodeId: string, newName: string, diagram: Object): Object
+    + addNode(event: Event, mode: string, diagram: Object): Object
+    + isRelationAllowed(diagram: Object, sourceId: string, targetId: string): boolean
+    + validateNodePosition(node: Object, diagram: Object): boolean
+  }
+  
+  class relationUtils {
+    + RELATION_TYPES: Object
+    + createRelation(sourceId: string, targetId: string, type: string, diagram: Object): Object
+    + updateRelationsForNode(nodeId: string, diagram: Object): Object
+    + isRelationAllowed(sourceType: string, targetType: string, relationType: string): boolean
+    + calculateRelationPath(source: Object, target: Object, waypoints: Array): string
+    + getRelationMarkerIds(relationType: string): Object
+  }
+  
+  class canvasUtils {
+    + getDockingPoint(node: Object, direction: string): Object
+    + layoutConnection(source: Object, target: Object): Array
+    + useCanvasPanning(config: Object): Object
+    + calculateCanvasCenter(svg: Element): Object
+    + transformScreenToCanvas(point: Object, canvasOffset: Object, zoom: number): Object
+  }
+  
+  class geometryUtils {
+    + calculateIntersectionPoint(line1: Object, line2: Object): Object
+    + getDistanceBetweenPoints(p1: Object, p2: Object): number
+    + normalizeVector(vector: Object): Object
+    + rotatePoint(point: Object, center: Object, angle: number): Object
+    + getBoundingBox(elements: Array): Object
+  }
+  
+  class diagramUtils {
+    + initialDiagram: Object
+    + NODE_TYPES: Object
+    + CONSTRAINTS: Object
+    + validateDiagram(diagram: Object): boolean
+    + mergeDiagrams(diagram1: Object, diagram2: Object): Object
+  }
+  
+  class declareImportUtils {
+    + importDeclareTxtWithLayout(fileContent: string): Object
+    + importDeclareXmlWithLayout(fileContent: string): Object
+    + importDeclareJsonWithLayout(fileContent: string): Object
+    + exportToXML(diagram: Object): string
+    + exportToJSON(diagram: Object): string
+  }
+  
+  class multiSelectionUtils {
+    + getBoundingBoxForMultiSelectedNodes(nodes: Array): Object
+    + getAllSelectableElementsInBox(box: Object, diagram: Object): Object
+    + getBoundingBoxForMixedSelection(selection: Object): Object
+    + handleMultiDrag(elements: Array, delta: Object): void
+  }
+  
+  class nodeConstraintUtils {
+    + validateNodeConstraint(node: Object, diagram: Object): Object
+    + getConstraintViolations(diagram: Object): Array
+    + suggestConstraintFixes(node: Object, diagram: Object): Array
+  }
+}
+
+package "External Libraries" {
+  class "bpmn-js" as BpmnJS {
+    + importXML(xml: string): Promise
+    + saveXML(): Promise
+    + get(service: string): Object
+    + attachTo(container: Element): void
+  }
+  
+  class React {
+    + Component: Class
+    + useState(initialState: any): Array
+    + useEffect(effect: Function, deps: Array): void
+    + useRef(initialValue: any): RefObject
+    + useCallback(callback: Function, deps: Array): Function
+  }
+  
+  class ReactDOM {
+    + render(element: JSX.Element, container: Element): void
+    + createRoot(container: Element): Root
+  }
+}
+
+
+IndexJS ||--|| App : renders
+App ||--|| LandingPage : routes to
+App ||--|| SplitModelers : routes to
+
+SplitModelers ||--|| ConDecModeler : contains left
+SplitModelers ||--|| BpmnModeler : contains right
+
+ConDecModeler ||--|| ConDecCanvas : renders
+ConDecModeler ||--|| NodeEditMenu : manages
+ConDecModeler ||--|| RelationEditMenu : manages
+ConDecModeler ||--|| NaryRelationEditMenu : manages
+
+ConDecCanvas ||--o ConDecNode : renders multiple
+ConDecCanvas ||--o ConDecRelation : renders multiple
+ConDecCanvas ||--o NaryRelation : renders multiple
+ConDecCanvas ||--|| FloatingNodeMenu : shows conditionally
+
+ConDecCanvas --> canvasUtils : uses panning
+ConDecCanvas --> geometryUtils : uses calculations
+ConDecCanvas --> multiSelectionUtils : uses selection
+
+ConDecNode --> nodeConstraintUtils : validates constraints
+ConDecNode --> nodeUtils : uses operations
+
+ConDecRelation --> relationUtils : uses operations
+ConDecRelation --> geometryUtils : calculates paths
+
+
+ConDecModeler --> diagramUtils : manages diagram state
+ConDecModeler --> declareImportUtils : imports/exports
+ConDecModeler --> nodeUtils : node operations
+ConDecModeler --> relationUtils : relation operations
+
+
+NodeEditMenu --> nodeConstraintUtils : constraint validation
+RelationEditMenu --> relationUtils : relation operations
+FloatingNodeMenu --> nodeUtils : append operations
+
+
+BpmnModeler --> BpmnJS : uses library
+
+
+App --|> React : extends Component
+LandingPage --|> React : extends Component
+SplitModelers --|> React : extends Component
+ConDecModeler --|> React : extends Component
+BpmnModeler --|> React : extends Component
+ConDecCanvas --|> React : extends Component
+ConDecNode --|> React : extends Component
+ConDecRelation --|> React : extends Component
+NaryRelation --|> React : extends Component
+NodeEditMenu --|> React : extends Component
+RelationEditMenu --|> React : extends Component
+NaryRelationEditMenu --|> React : extends Component
+FloatingNodeMenu --|> React : extends Component
+
+IndexJS --> ReactDOM : uses
+
+
+relationUtils --> geometryUtils : path calculations
+canvasUtils --> geometryUtils : intersection calculations
+nodeUtils --> diagramUtils : diagram validation
+declareImportUtils --> diagramUtils : creates diagrams
+multiSelectionUtils --> geometryUtils : bounding boxes
+
+note top of ConDecModeler
+  **Main Orchestrator Component**
+  - Manages all diagram state
+  - Handles user interactions
+  - Coordinates between canvas and UI
+  - Implements undo/redo functionality
+  - Manages selection and editing modes
+end note
+
+note top of ConDecCanvas
+  **Core Rendering Engine**
+  - SVG-based diagram rendering
+  - Drag & drop functionality
+  - Multi-selection with lasso tool
+  - Panning and zooming
+  - Real-time visual feedback
+end note
+
+note top of relationUtils
+  **Relation Logic Center**
+  - 22 different relation types
+  - Constraint validation
+  - Path calculation algorithms
+  - Connection management
+end note
+
+note top of declareImportUtils
+  **Data Integration Hub**
+  - Supports TXT, XML, JSON formats
+  - Layout preservation
+  - Cross-format conversion
+  - Export functionality
+end note
+
+@enduml

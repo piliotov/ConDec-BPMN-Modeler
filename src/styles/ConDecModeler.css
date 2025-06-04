@@ -1,0 +1,350 @@
+/* ConDec Modeler Styles */
+
+/* --- Modeler Top Bar --- */
+.condec-modeler-wrapper .button-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  background: #183153; /* Professional dark blue */
+  padding: 0 0 0 0;
+  min-height: 48px;
+  border-bottom: 1.5px solid #e3e8f0;
+  z-index: 100;
+}
+
+/* --- Modeler Main Bar (lighter, matches BPMN) --- */
+.condec-modeler-container {
+  background: #f3f4f7; /* Light background for both BPMN and ConDec */
+}
+
+/* Main container */
+.condec-modeler-wrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  min-width: 0;
+  min-height: 0;
+  flex: 1;
+  position: relative;
+  background: #f4f7fb;
+  overflow: hidden;
+}
+
+/* Remove or override .condec-button-bar background and padding to match BPMN */
+.condec-button-bar,
+.button-container {
+  background: #183153 !important; /* Match BPMN and landing page top bar */
+  border-bottom: 1px solid #e3eaf3 !important;
+  color: #fff !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 0 !important;
+}
+
+/* Remove margin between buttons (handled by .modeler-btn) */
+.condec-button-bar button,
+.condec-button-bar .import-button {
+  margin-right: 0 !important;
+  background: none !important;
+  border: none !important;
+  padding: 0 !important;
+}
+
+/* Mode buttons (select, add activity, add relation) */
+.condec-mode-buttons {
+  display: flex;
+  margin-left: auto;
+}
+
+.condec-mode-buttons button {
+  width: 40px;
+  height: 40px;
+  padding: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.condec-mode-buttons button.active {
+  background-color: #e3eaf3;
+  border-color: #1976d2;
+}
+
+/* Remove blue border from palette and mode buttons in split view */
+.condec-mode-buttons button.active,
+.condec-palette .palette-entry.active {
+  background-color: #e6f7ff;
+  border-color: transparent;
+}
+
+/* --- Modeler Buttons --- */
+.modeler-btn,
+.modeler-btn.import {
+  background: #183153; /* Match top bar */
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  margin: 0 8px 0 0;
+  padding: 8px 18px;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.18s, color 0.18s;
+  outline: none;
+  box-shadow: none;
+}
+
+.modeler-btn:last-child {
+  margin-right: 0;
+}
+
+/* --- Button Hover/Active --- */
+.modeler-btn:hover,
+.modeler-btn.import:hover {
+  background: #1de9b6; /* Turquoise */
+  color: #fff;
+}
+
+.modeler-btn:active,
+.modeler-btn.import:active {
+  background: #13bfa6; /* Slightly darker turquoise */
+  color: #fff;
+}
+
+/* --- Palette background (left bar) --- */
+.condec-palette {
+  background: #eaf1fb !important; /* Lighter blue for palette bar */
+  border: 1px solid #b0b8c1;
+}
+
+/* --- Palette buttons (icons) --- */
+.palette-entry {
+  background: transparent;
+  color: #183153;
+  transition: background 0.18s, color 0.18s;
+}
+
+.palette-entry.active,
+.palette-entry:hover {
+  background: #1de9b6 !important; /* Turquoise on hover/active */
+  color: #fff !important;
+}
+
+.palette-entry svg {
+  fill: currentColor;
+  transition: fill 0.18s;
+}
+
+/* --- BPMN bar (if present, match color) --- */
+.bpmn-modeler-bar {
+  background: #f3f4f7 !important; /* Match ConDec main bar */
+  border-bottom: 1.5px solid #e3e8f0;
+}
+
+/* Canvas container */
+.condec-canvas-container {
+  flex: 1;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  position: relative;
+}
+
+.condec-canvas {
+  width: 100%;
+  height: 100%;
+  background-color: #fff; 
+  background-image: none;
+  min-width: 0;
+  min-height: 0;
+  display: block;
+}
+
+/* Properties panel */
+.condec-properties-container {
+  width: 260px;
+  min-width: 260px;
+  height: 100%;
+  overflow-y: auto;
+  background-color: #f7fafd;
+  border-left: 1px solid #e3eaf3;
+  box-shadow: -2px 0 5px rgba(0, 0, 0, 0.05);
+}
+
+.condec-properties-panel {
+  padding: 16px;
+}
+
+.condec-properties-panel h3 {
+  font-size: 16px;
+  font-weight: 600;
+  margin-top: 0;
+  margin-bottom: 16px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #e3eaf3;
+  color: #183153;
+}
+
+.property-group {
+  margin-bottom: 16px;
+}
+
+.property-group label {
+  display: block;
+  font-weight: 500;
+  margin-bottom: 6px;
+  font-size: 14px;
+  color: #183153;
+}
+
+.property-group input,
+.property-group select {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #b0b8c1;
+  border-radius: 4px;
+  font-size: 14px;
+  background: #fff;
+  color: #1a2233;
+}
+
+.property-group .position-inputs {
+  display: flex;
+  gap: 8px;
+}
+
+.property-group .position-inputs input {
+  flex: 1;
+  width: auto;
+}
+
+/* Node styles */
+.condec-node {
+  cursor: pointer;
+}
+
+.condec-node-menu {
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  border-radius: 6px;
+  background: #fff;
+  border: 1px solid #b0b8c1;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 4px;
+  min-width: 48px;
+  min-height: 48px;
+  z-index: 1000;
+}
+
+.menu-icon-btn {
+  background: none;
+  border: none;
+  padding: 8px;
+  cursor: pointer;
+  outline: none;
+  border-radius: 4px;
+  transition: background 0.15s;
+}
+
+.menu-icon-btn:hover {
+  background: #e3eaf3;
+}
+
+/* Delete button */
+.delete-button {
+  margin-top: 16px;
+  padding: 8px 16px;
+  background-color: #c62828;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  width: 100%;
+  transition: background-color 0.2s;
+}
+
+.delete-button:hover {
+  background-color: #8e1c1c;
+}
+
+/* Touch device specific styles */
+@media (pointer: coarse) {
+  .condec-mode-buttons button {
+    width: 48px;
+    height: 48px;
+  }
+
+  .property-group input,
+  .property-group select {
+    padding: 10px;
+    font-size: 16px;
+  }
+}
+
+/* Edit node popup/modal */
+.condec-edit-node-popup {
+  box-shadow: 0 4px 24px rgba(0,0,0,0.18);
+  border-radius: 8px;
+  background: #fff;
+  border: 1.5px solid #1976d2;
+  z-index: 3000;
+  position: fixed;
+}
+
+.condec-edit-node-popup-header {
+  font-weight: 600;
+  font-size: 16px;
+  color: #1976d2;
+  margin-bottom: 12px;
+  cursor: move;
+  user-select: none;
+  display: flex;
+  align-items: center;
+}
+
+.condec-edit-node-popup .property-group {
+  margin-bottom: 12px;
+}
+
+.condec-edit-node-popup label {
+  font-weight: 500;
+  margin-bottom: 4px;
+  font-size: 13px;
+  display: block;
+}
+
+.condec-edit-node-popup input,
+.condec-edit-node-popup select {
+  width: 100%;
+  padding: 6px;
+  border: 1px solid #b0b8c1;
+  border-radius: 4px;
+  font-size: 13px;
+  background: #fff;
+  color: #1a2233;
+}
+
+.condec-edit-node-popup .position-inputs {
+  display: flex;
+  gap: 6px;
+}
+
+.condec-edit-node-popup .position-inputs input {
+  width: 50%;
+}
+
+/* Floating relation edit popup */
+.condec-edit-relation-popup {
+  box-shadow: 0 4px 24px rgba(0,0,0,0.18);
+  border-radius: 8px;
+  background: #fff;
+  border: 1.5px solid #1976d2;
+}
+
+/* --- General --- */
+body {
+  background: #f3f4f7;
+}

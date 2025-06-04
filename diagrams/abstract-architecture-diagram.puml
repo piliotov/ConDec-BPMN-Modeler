@@ -1,0 +1,137 @@
+@startuml ConDecModeler_Abstract_Architecture
+!theme plain
+skinparam backgroundColor #FFFFFF
+skinparam packageStyle rectangle
+skinparam componentStyle uml2
+skinparam linetype ortho
+
+title ConDec Modeler - Abstract Architecture Overview
+
+package "Presentation Layer" as PresentationLayer {
+  [Landing Page] as Landing
+  [Split View Container] as SplitView
+  [Edit Menus] as EditMenus
+  [Floating Menus] as FloatingMenus
+}
+
+package "Application Layer" as ApplicationLayer {
+  [ConDec Modeler] as ConDecModeler
+  [BPMN Modeler] as BpmnModeler
+  [State Manager] as StateManager
+}
+
+package "Rendering Engine" as RenderingEngine {
+  [SVG Canvas] as Canvas
+  [Node Renderer] as NodeRenderer
+  [Relation Renderer] as RelationRenderer
+  [Visual Effects] as VisualEffects
+}
+
+package "Business Logic" as BusinessLogic {
+  [Diagram Engine] as DiagramEngine
+  [Constraint Engine] as ConstraintEngine
+  [Relation Engine] as RelationEngine
+  [Geometry Engine] as GeometryEngine
+}
+
+package "Data Layer" as DataLayer {
+  [Import/Export] as ImportExport
+  [Local Storage] as LocalStorage
+  [Diagram Model] as DiagramModel
+}
+
+package "External Systems" as ExternalSystems {
+  [BPMN.js Library] as BpmnLib
+  [React Framework] as ReactFramework
+  [Browser APIs] as BrowserAPIs
+}
+
+Landing --> ConDecModeler : navigate
+SplitView --> ConDecModeler : left panel
+SplitView --> BpmnModeler : right panel
+
+ConDecModeler --> StateManager : manages state
+ConDecModeler --> Canvas : renders to
+
+StateManager --> DiagramModel : reads/writes
+Canvas --> NodeRenderer : delegates
+Canvas --> RelationRenderer : delegates
+
+
+EditMenus --> ConDecModeler : user commands
+FloatingMenus --> ConDecModeler : context actions
+Canvas --> ConDecModeler : selection events
+
+
+ConDecModeler --> DiagramEngine : diagram operations
+DiagramEngine --> ConstraintEngine : validates constraints
+DiagramEngine --> RelationEngine : manages relations
+RelationEngine --> GeometryEngine : calculates positions
+
+
+NodeRenderer --> VisualEffects : applies styling
+RelationRenderer --> VisualEffects : applies styling
+Canvas --> GeometryEngine : position calculations
+
+
+ConDecModeler --> ImportExport : save/load files
+ConDecModeler --> LocalStorage : auto-save
+ImportExport --> DiagramModel : converts data
+
+
+BpmnModeler --> BpmnLib : delegates to
+ConDecModeler --> ReactFramework : built with
+Canvas --> BrowserAPIs : DOM/SVG manipulation
+ImportExport --> BrowserAPIs : file operations
+
+
+
+note right of ConDecModeler
+  **Main Controller**
+  - Orchestrates all operations
+  - Implements MVC pattern
+  - Manages application state
+  - Handles user interactions
+end note
+
+note right of Canvas
+  **Rendering Hub**
+  - SVG-based visualization
+  - Real-time updates
+  - Interactive elements
+  - Performance optimized
+end note
+
+note right of DiagramEngine
+  **Core Business Logic**
+  - Domain rules enforcement
+  - Data validation
+  - Operation coordination
+  - Consistency maintenance
+end note
+
+note right of ImportExport
+  **Data Integration**
+  - Multiple format support
+  - Backward compatibility
+  - Layout preservation
+  - Cross-platform support
+end note
+
+note bottom of StateManager
+  **State Management Pattern**
+  - Centralized state
+  - Immutable updates
+  - Undo/Redo support
+  - Event-driven updates
+end note
+
+
+note top of PresentationLayer : UI Components & User Interaction
+note top of ApplicationLayer : Application Logic & Coordination  
+note top of RenderingEngine : Visual Representation & Graphics
+note top of BusinessLogic : Domain Rules & Core Algorithms
+note top of DataLayer : Data Management & Persistence
+note top of ExternalSystems : Third-party Dependencies
+
+@enduml

@@ -1,0 +1,100 @@
+@startuml ConDecModeler_Data_Flow
+!theme plain
+skinparam backgroundColor #FFFFFF
+skinparam activityStyle uml2
+
+title ConDec Modeler - Data Flow & Architectural Patterns
+
+rectangle "User Interface Layer" as UILayer {
+  component [UI Components] as UI
+  component [Event Handlers] as Events
+}
+
+rectangle "Application Core" as AppCore {
+  component [State Management] as State
+  component [Command Processor] as Commands
+  component [Undo/Redo Stack] as UndoRedo
+}
+
+rectangle "Domain Logic" as Domain {
+  component [Diagram Operations] as DiagramOps
+  component [Constraint Validation] as Validation
+  component [Relation Management] as Relations
+}
+
+rectangle "Rendering System" as Rendering {
+  component [Canvas Manager] as CanvasManager
+  component [Element Renderers] as Renderers
+  component [Visual Feedback] as Feedback
+}
+
+rectangle "Data Persistence" as Persistence {
+  component [File I/O] as FileIO
+  component [Format Converters] as Converters
+  component [Storage Manager] as Storage
+}
+
+
+UI --> Events : user actions
+Events --> Commands : translate to commands
+Commands --> State : update state
+State --> DiagramOps : trigger operations
+
+DiagramOps --> Validation : validate changes
+DiagramOps --> Relations : manage relations
+Validation --> State : validation results
+Relations --> State : relation updates
+
+State --> CanvasManager : state changes
+CanvasManager --> Renderers : render updates
+Renderers --> Feedback : visual updates
+Feedback --> UI : user feedback
+
+Commands --> UndoRedo : store for undo
+UndoRedo --> State : restore state
+
+State --> Storage : auto-save
+FileIO --> Converters : process files
+Converters --> State : load data
+State --> Converters : export data
+
+note right of Commands
+  **Command Pattern**
+  - Encapsulates operations
+  - Enables undo/redo
+  - Decouples UI from logic
+  - Supports macro commands
+end note
+
+note right of State
+  **Observer Pattern**
+  - Notifies on state changes
+  - Reactive updates
+  - Loose coupling
+  - Event-driven architecture
+end note
+
+note right of Renderers
+  **Strategy Pattern**
+  - Different rendering strategies
+  - Node vs Relation rendering
+  - Pluggable algorithms
+  - Easy extensibility
+end note
+
+note right of Converters
+  **Adapter Pattern**
+  - Multiple file formats
+  - Unified internal model
+  - Legacy compatibility
+  - Format abstraction
+end note
+
+note bottom of AppCore
+  **MVC Architecture**
+  Model: State Management
+  View: Rendering System  
+  Controller: Command Processor
+end note
+
+@enduml
