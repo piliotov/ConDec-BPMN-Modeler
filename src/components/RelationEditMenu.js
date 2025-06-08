@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useState } from 'react';
-import { RELATION_TYPES } from '../utils/relations/relationUtils';
+import { RELATION_TYPES, isRelationAllowed } from '../utils/relations/relationUtils';
 import relationDescriptions from '../utils/relations/relationDescriptions';
 import { UpdateRelationCommand, DeleteRelationCommand } from '../utils/commands/DiagramCommands';
 
@@ -73,6 +73,11 @@ export function RelationEditMenu({
 
   const handleChangeType = (e) => {
     const newType = e.target.value;
+        if (!isRelationAllowed(diagram, sourceNodeId, targetNodeId, newType)) {
+      alert(`Cannot change to ${newType} relation due to target node constraints.`);
+      return;
+    }
+    
     setRelationType(newType);
     
     if (!commandStack || !diagram) return;
@@ -82,6 +87,11 @@ export function RelationEditMenu({
 
   const handleChangeSource = (e) => {
     const newSourceId = e.target.value;
+        if (!isRelationAllowed(diagram, newSourceId, targetNodeId, relationType)) {
+      alert(`Cannot change source due to target node constraints.`);
+      return;
+    }
+    
     setSourceNodeId(newSourceId);
     
     if (!commandStack || !diagram) return;
@@ -91,6 +101,11 @@ export function RelationEditMenu({
 
   const handleChangeTarget = (e) => {
     const newTargetId = e.target.value;
+        if (!isRelationAllowed(diagram, sourceNodeId, newTargetId, relationType)) {
+      alert(`Cannot change target due to target node constraints.`);
+      return;
+    }
+    
     setTargetNodeId(newTargetId);
     
     if (!commandStack || !diagram) return;
@@ -99,6 +114,11 @@ export function RelationEditMenu({
   };
 
   const handleReverseRelation = () => {
+    if (!isRelationAllowed(diagram, targetNodeId, sourceNodeId, relationType)) {
+      alert(`Cannot reverse relation due to constraints.`);
+      return;
+    }
+    
     setSourceNodeId(targetNodeId);
     setTargetNodeId(sourceNodeId);
 

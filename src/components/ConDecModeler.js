@@ -633,7 +633,7 @@ const ConDecModeler = ({ width = '100%', height = '100%', style = {}, loadedFile
       return;
     }
 
-    if (!isRelationAllowed(diagram, sourceId, targetId)) {
+    if (!isRelationAllowed(diagram, sourceId, targetId, RELATION_TYPES.RESP_EXISTENCE)) {
       alert('Cannot create this relation due to target constraints.');
       setNewRelation(null);
       return;
