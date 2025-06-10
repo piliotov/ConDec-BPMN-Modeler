@@ -57,7 +57,7 @@ const LandingPage = ({ onStartModeling, onLoadFile }) => {
             ConDec & BPMN Modeler
           </h1>
           <p className="landing-subtitle">
-            Professional modeling tool for constraint-based declarative processes and BPMN diagrams
+            Modeling tool for constraint-based declarative processes and BPMN 2.0
           </p>
         </div>
       </header>
@@ -65,7 +65,6 @@ const LandingPage = ({ onStartModeling, onLoadFile }) => {
       <main className="landing-main">
         <div className="container">
           <section className="quick-actions">
-            <h2>Get Started</h2>
             <div className="action-cards">
               <div className="action-card primary">
                 <h3>Create New Model</h3>

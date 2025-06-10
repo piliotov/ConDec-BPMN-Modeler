@@ -14,3 +14,7 @@ Thumbs.db
 # Environment variables
 .env
 .env.local
+
+# Thesis documentation files
+THESIS_CODE_ATTRIBUTION.txt
+THESIS_TECHNICAL_DOCUMENTATION.txt

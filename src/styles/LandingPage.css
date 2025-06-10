@@ -171,6 +171,13 @@
   max-width: 800px;
   margin: 0 auto;
 }
+.about-section h2 {
+  font-size: 2rem;
+  margin-bottom: 1.5rem;
+  color: #183153;
+  font-weight: 600;
+  text-align: center;
+}
 .about-text h3 {
   font-size: 1.2rem;
   margin: 1rem 0 0.5rem 0; 
