@@ -1,7 +1,7 @@
 
 {
-  "short_name": "BDM Modeler",
-  "name": "BDM - Decision and Process Modeler",
+  "short_name": "ConDec-BPMN Modeler",
+  "name": "ConDec & BPMN Modeler - Declarative and BPMN Process Modeling Tool",
   "icons": [
     {
       "src": "favicon.ico",
