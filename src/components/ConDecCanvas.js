@@ -45,6 +45,7 @@ export const ConDecCanvas = forwardRef(function ConDecCanvas(props, ref) {
     setDiagram,
     naryStartNode,
     naryMouse,
+    narySelectedNodes = [],
     onNaryRelationClick,
     getDiagram,
   } = props;
@@ -309,7 +310,8 @@ export const ConDecCanvas = forwardRef(function ConDecCanvas(props, ref) {
       onNaryRelationClick,
       getNodeCenter,
       getNodeEdgePoint,
-      renderAlignmentGuides
+      renderAlignmentGuides,
+      narySelectedNodes
     });
   };
 

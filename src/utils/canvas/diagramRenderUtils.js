@@ -215,6 +215,7 @@ export const renderDiagramElements = ({
           node={node}
           isSelected={isSelected}
           isMultiSelected={!!isMultiSelected}
+          isNarySelected={isNarySelected}
           mode={props.mode}
           onSelect={(e) => {
             // addRelation mode
@@ -275,11 +276,6 @@ export const renderDiagramElements = ({
           }}
           onRenameBlur={() => {}}
           onSize={size => handleNodeSize(node.id, size)}
-          style={{
-            ...(isNarySelected && props.mode === 'nary'
-              ? { boxShadow: '0 0 0 3px #1976d2', border: '2px solid #1976d2' }
-              : {})
-          }}
         />
       </React.Fragment>
     );

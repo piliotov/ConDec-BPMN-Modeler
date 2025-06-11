@@ -22,7 +22,8 @@ export function addNode(e, mode, getDiagram, canvasOffset, zoom, getCommandStack
     name: '',
     x: canvasX,
     y: canvasY,
-    type: 'activity'
+    type: 'activity',
+    editing: true 
   };
   const commandStack = getCommandStack();
   const command = new CreateNodeCommand(newNode, getDiagram, setDiagram);

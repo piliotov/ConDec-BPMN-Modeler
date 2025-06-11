@@ -13,6 +13,8 @@ export const CONSTRAINTS = {
 export function ConDecNode({
   node,
   isSelected,
+  isMultiSelected,
+  isNarySelected,
   mode,
   onSelect,
   onDoubleClick,
@@ -196,9 +198,9 @@ export function ConDecNode({
         height={nodeHeight}
         rx="5"
         ry="5"
-        fill={constraintViolated ? "#ffebee" : "#ffffff"}
-        stroke={constraintViolated ? '#d32f2f' : (isSelected ? '#1a73e8' : '#000')}
-        strokeWidth={constraintViolated ? 2.5 : (isSelected ? 2.5 : 1.5)}
+        fill={constraintViolated ? "#ffebee" : (isNarySelected ? "#e3f2fd" : "#ffffff")}
+        stroke={constraintViolated ? '#d32f2f' : (isSelected ? '#1a73e8' : (isNarySelected ? '#1976d2' : '#000'))}
+        strokeWidth={constraintViolated ? 2.5 : (isSelected ? 2.5 : (isNarySelected ? 2.5 : 1.5))}
         fillOpacity={0.95}
         style={{ cursor: mode === 'addRelation' ? 'crosshair' : 'pointer' }}
       />
@@ -286,8 +288,8 @@ export function ConDecNode({
               textAnchor="middle"
               dominantBaseline="middle"
               fontSize="12"
-              fill={isSelected ? "#1976d2" : "#333"}
-              fontWeight={isSelected ? "600" : "normal"}
+              fill={isSelected ? "#1976d2" : (isNarySelected ? "#1976d2" : "#333")}
+              fontWeight={isSelected ? "600" : (isNarySelected ? "600" : "normal")}
               pointerEvents="none"
               style={{
                 userSelect: 'none',

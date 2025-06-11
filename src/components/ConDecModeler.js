@@ -227,6 +227,7 @@ const ConDecModeler = ({ width = '100%', height = '100%', style = {}, loadedFile
             setMode('nary');
             setNaryStartNode(null);
             setNaryMouse(null);
+            setNarySelectedNodes([]);
           }}
           title="N-ary (Choice) Relation"
           style={{
@@ -457,6 +458,13 @@ const ConDecModeler = ({ width = '100%', height = '100%', style = {}, loadedFile
       window.removeEventListener('keydown', handleKeyDown);
     };
   }, [selectedElement, handleDelete, handleUndo, handleRedo]);
+
+  // Clear nary selected nodes when mode changes away from 'nary'
+  useEffect(() => {
+    if (mode !== 'nary' && narySelectedNodes.length > 0) {
+      setNarySelectedNodes([]);
+    }
+  }, [mode, narySelectedNodes]);
 
   const handleNodeClickNaryMode = (nodeId) => {
     setNarySelectedNodes(prev => {
@@ -754,15 +762,105 @@ const ConDecModeler = ({ width = '100%', height = '100%', style = {}, loadedFile
     URL.revokeObjectURL(url);
   };
 
+  const calculateDiagramBounds = (diagram) => {
+    if (!diagram || !diagram.nodes || diagram.nodes.length === 0) {
+      return { x: 0, y: 0, width: 800, height: 600 };
+    }
+
+    const allPoints = [];
+    
+    // Add all node bounds
+    diagram.nodes.forEach(node => {
+      const nodeWidth = node.width || 100;
+      const nodeHeight = node.height || 50;
+      allPoints.push(
+        { x: node.x - nodeWidth/2, y: node.y - nodeHeight/2 },
+        { x: node.x + nodeWidth/2, y: node.y + nodeHeight/2 }
+      );
+    });
+
+    // Add all relation waypoints
+    if (diagram.relations) {
+      diagram.relations.forEach(relation => {
+        if (relation.waypoints && relation.waypoints.length > 0) {
+          relation.waypoints.forEach(waypoint => {
+            allPoints.push({ x: waypoint.x, y: waypoint.y });
+          });
+        }
+        
+        // Add n-ary diamond positions
+        if (relation.diamondPos) {
+          allPoints.push({ x: relation.diamondPos.x, y: relation.diamondPos.y });
+        }
+      });
+    }
+
+    if (allPoints.length === 0) {
+      return { x: 0, y: 0, width: 800, height: 600 };
+    }
+
+    const padding = 50; // Add some padding around the diagram
+    const left = Math.min(...allPoints.map(p => p.x)) - padding;
+    const right = Math.max(...allPoints.map(p => p.x)) + padding;
+    const top = Math.min(...allPoints.map(p => p.y)) - padding;
+    const bottom = Math.max(...allPoints.map(p => p.y)) + padding;
+
+    return {
+      x: left,
+      y: top,
+      width: Math.max(right - left, 400), // Minimum width
+      height: Math.max(bottom - top, 300)  // Minimum height
+    };
+  };
+
   const handleExportSVG = () => {
-    const svg = document.querySelector('.condec-canvas');
-    if (!svg) return;
-    const clone = svg.cloneNode(true);
-    clone.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
-    clone.setAttribute('width', svg.clientWidth || 800);
-    clone.setAttribute('height', svg.clientHeight || 600);
+    if (!diagram) return;
+    
+    // Calculate the bounds of the entire diagram
+    const bounds = calculateDiagramBounds(diagram);
+    
+    // Get the current SVG element
+    const originalSvg = document.querySelector('.condec-canvas');
+    if (!originalSvg) return;
+
+    // Create a new SVG element for export with calculated dimensions
+    const exportSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    exportSvg.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+    exportSvg.setAttribute('width', bounds.width);
+    exportSvg.setAttribute('height', bounds.height);
+    exportSvg.setAttribute('viewBox', `${bounds.x} ${bounds.y} ${bounds.width} ${bounds.height}`);
+
+    // Copy all the defs (markers, patterns, etc.) from the original SVG
+    const originalDefs = originalSvg.querySelector('defs');
+    if (originalDefs) {
+      exportSvg.appendChild(originalDefs.cloneNode(true));
+    }
+
+    // Create a group element to contain all diagram elements without viewport transforms
+    const group = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+    
+    // Find the main diagram group in the original SVG (the one with the transform)
+    const originalGroup = originalSvg.querySelector('g[transform]');
+    if (originalGroup) {
+      // Copy all children of the transformed group, but without the viewport transform
+      Array.from(originalGroup.children).forEach(child => {
+        // Skip alignment guides and UI elements we don't want in the export
+        if (child.classList.contains('alignment-guides') || 
+            child.classList.contains('multi-select-bounding-box') ||
+            child.classList.contains('selection-box') ||
+            child.classList.contains('lasso-box') ||
+            child.classList.contains('hologram-node')) {
+          return;
+        }
+        group.appendChild(child.cloneNode(true));
+      });
+    }
+
+    exportSvg.appendChild(group);
+
+    // Serialize and download
     const serializer = new XMLSerializer();
-    const svgString = serializer.serializeToString(clone);
+    const svgString = serializer.serializeToString(exportSvg);
     const blob = new Blob([svgString], { type: 'image/svg+xml' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
