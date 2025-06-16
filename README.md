@@ -3,8 +3,6 @@
 A web-based modeling tool that seamlessly integrates **ConDec (Constraint-based Declarative)** and **BPMN (Business Process Model and Notation)** paradigms in a single application. This dual-paradigm approach allows users to model business processes from different perspectives without switching between multiple tools. The online platform allows the users to save time installing and using outfdated software not compatible with modeler devices. 
 
 ![Build Status](https://img.shields.io/badge/build-passing-brightgreen)
-![Version](https://img.shields.io/badge/version-0.1.0-blue)
-![License](https://img.shields.io/badge/license-MIT-green)
 ![React](https://img.shields.io/badge/React-18.2.0-blue)
 
 ## Key Features
@@ -30,7 +28,7 @@ A web-based modeling tool that seamlessly integrates **ConDec (Constraint-based 
   - Special relations (Coexistence, Not-Coexistence, Resp-Absence)
 - **N-ary Relations**: Choice and Exclusive Choice constraints for multiple activities
 
-### **Professional UI/UX**
+### **UI/UX**
 - **Interactive Canvas**: Zoom, pan, and navigate large diagrams with ease
 - **Inline Editing**: Double-click nodes for instant renaming
 - **Context Menus**: Left-click access to properties and actions
@@ -43,7 +41,7 @@ A web-based modeling tool that seamlessly integrates **ConDec (Constraint-based 
   - `Delete/Backspace` - Delete selected elements
   - `Escape` - Cancel current action
 
-### **Comprehensive Import/Export**
+### **Import/Export**
 - **ConDec Formats**:
   - Import: XML, TXT (Declare Python dictionaries), JSON
   - Export: JSON, SVG
@@ -63,8 +61,6 @@ A web-based modeling tool that seamlessly integrates **ConDec (Constraint-based 
 7. [Development](#development)
 8. [API Reference](#api-reference)
 9. [Troubleshooting](#troubleshooting)
-10. [Contributing](#contributing)
-
 ## Installation
 This set up is needed if you want to run the tool locally, in case you don't want, you can use the link in this repo for the online version. 
 ### Prerequisites
