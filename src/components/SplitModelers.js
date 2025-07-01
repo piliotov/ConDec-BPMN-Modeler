@@ -33,7 +33,7 @@ const SplitModelers = ({ loadedFile, onBackToLanding }) => {
             active={viewMode === mode}
             onClick={() => setViewMode(mode)}
           >
-            {mode.charAt(0).toUpperCase() + mode.slice(1) + (mode === 'split' ? ' View' : ' Only')}
+            {mode === 'split' ? 'Split View' : mode === 'bpmn' ? 'BPMN' : 'ConDec'}
           </ViewModeButton>
         ))}
       </div>
