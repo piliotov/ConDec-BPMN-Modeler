@@ -27,18 +27,3 @@ export function generatePath(waypoints) {
   }
   return path.join(' ');
 }
-export function generateAngledPath(waypoints) {
-  if (!waypoints || waypoints.length < 2) return '';
-  
-  const path = [`M ${waypoints[0].x} ${waypoints[0].y}`];
-  
-  for (let i = 1; i < waypoints.length; i++) {
-    const prev = waypoints[i-1];
-    const curr = waypoints[i];
-    const midX = (prev.x + curr.x) / 2;
-    path.push(`L ${midX} ${prev.y}`);
-    path.push(`L ${midX} ${curr.y}`);
-    path.push(`L ${curr.x} ${curr.y}`);
-  }
-  return path.join(' ');
-}

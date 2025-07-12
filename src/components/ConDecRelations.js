@@ -350,21 +350,6 @@ export function ConDecRelation({
     return out;
   }
 
-  function generateSmoothPath(points) {
-    if (points.length < 2) return '';
-    let d = `M ${points[0].x} ${points[0].y}`;
-    for (let i = 1; i < points.length; i++) {
-      const p0 = points[i - 1];
-      const p1 = points[i];
-      const c1x = p0.x + (p1.x - p0.x) / 3;
-      const c1y = p0.y + (p1.y - p0.y) / 3;
-      const c2x = p0.x + 2 * (p1.x - p0.x) / 3;
-      const c2y = p0.y + 2 * (p1.y - p0.y) / 3;
-      d += ` C ${c1x} ${c1y}, ${c2x} ${c2y}, ${p1.x} ${p1.y}`;
-    }
-    return d;
-  }
-
   function getMarkerOffsetForId(markerId, isEnd = false, startMarkerId = null) {
     if (!markerId) return 0;
     if (
@@ -441,7 +426,7 @@ export function ConDecRelation({
       {/* Main center path with markers (always render for markers, even if alt, but invisible for alt) */}
       {(pathStyle !== 'alt') && (
         <path
-          d={generateSmoothPath(currentWaypoints)}
+          d={generatePath(currentWaypoints)}
           fill="none"
           {...style}
           markerEnd={endMarkerId}
@@ -453,7 +438,7 @@ export function ConDecRelation({
       {/* For alt: render a center path only for markers */}
       {pathStyle === 'alt' && (startMarkerId || endMarkerId) && (
         <path
-          d={generateSmoothPath(currentWaypoints)}
+          d={generatePath(currentWaypoints)}
           fill="none"
           stroke="transparent"
           strokeWidth={style.strokeWidth || 1.5}
@@ -478,7 +463,7 @@ export function ConDecRelation({
           return [-offset, offset].map((off, i) => (
             <path
               key={`chain-parallel-${i}`}
-              d={generateSmoothPath(trimSideLine(offsetPolyline(currentWaypoints, off)))}
+              d={generatePath(trimSideLine(offsetPolyline(currentWaypoints, off)))}
               fill="none"
               {...style}
               pointerEvents="none"
@@ -489,7 +474,7 @@ export function ConDecRelation({
           return [offset, -offset].map((off, i) => (
             <path
               key={`alt-parallel-${i}`}
-              d={generateSmoothPath(trimSideLine(offsetPolyline(currentWaypoints, off)))}
+              d={generatePath(trimSideLine(offsetPolyline(currentWaypoints, off)))}
               fill="none"
               {...style}
               pointerEvents="none"

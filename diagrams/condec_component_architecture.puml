@@ -1,0 +1,64 @@
+@startuml ConDec Component Architecture
+!theme plain
+skinparam backgroundColor transparent
+skinparam defaultTextAlignment center
+skinparam padding 8
+skinparam componentStyle rectangle
+
+package "React.js Component System" as ReactSystem {
+    
+    rectangle "ConDecModeler\n(Top-Level Controller)" as Controller #lightblue {
+        rectangle "Diagram Model" as Model
+        rectangle "User Selection" as Selection  
+        rectangle "Edit Mode" as EditMode
+    }
+    
+    package "User Interface" as UILayer #lightyellow {
+        rectangle "Visual Canvas\n(SVG Graphics)" as Canvas
+        rectangle "Toolbars & Menus" as Toolbars
+        rectangle "Property Editors" as Properties
+    }
+    
+    package "User Interactions" as InteractionLayer #lightgreen {
+        rectangle "Mouse & Keyboard\nHandlers" as Input
+        rectangle "Undo/Redo System" as UndoRedo
+    }
+}
+
+' Relationships showing hierarchy and coordination
+Controller --> UILayer : "coordinates\ninterface"
+Controller --> InteractionLayer : "manages\nuser actions"
+
+' Internal relationships
+Canvas --> Model : "displays\ndiagram"
+Toolbars --> Controller : "triggers\ncommands"
+Properties --> Model : "edits\nproperties"
+Input --> Controller : "sends\nevents"
+UndoRedo --> Model : "modifies\nstate"
+
+' Notes explaining the architecture
+note top of Controller
+  **Hierarchical Structure**
+  Top component manages overall state:
+  • Diagram data structure
+  • Selection state  
+  • Active editing mode
+end note
+
+note right of UILayer
+  **Separation of Concerns**
+  Rendering layer handles:
+  • Visual representation
+  • User interface elements
+  • Display logic
+end note
+
+note bottom of InteractionLayer
+  **Interaction Processing**
+  Handles user input:
+  • Mouse/keyboard events
+  • Command execution
+  • State changes
+end note
+
+@enduml

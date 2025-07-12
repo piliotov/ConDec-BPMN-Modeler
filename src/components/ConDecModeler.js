@@ -526,7 +526,6 @@ const ConDecModeler = ({ width = '100%', height = '100%', style = {}, loadedFile
 
   const handleNodeDragStart = (nodeId, e) => {
     const node = diagram.nodes.find(n => n.id === nodeId);
-    console.log('[DEBUG] Drag start for node', nodeId, 'at', node ? { x: node.x, y: node.y } : null);
     
     setDraggedElement({
       id: nodeId,
@@ -622,9 +621,6 @@ const ConDecModeler = ({ width = '100%', height = '100%', style = {}, loadedFile
   };
 
   const handleRelationCreate = (sourceId, targetId) => {
-    console.log('Creating relation:', { sourceId, targetId });
-    console.log('Current diagram state:', diagram);
-
     const existingRelation = diagram?.relations?.find(
       r => r.sourceId === sourceId && 
           r.targetId === targetId && 
@@ -632,7 +628,6 @@ const ConDecModeler = ({ width = '100%', height = '100%', style = {}, loadedFile
     );
 
     if (existingRelation) {
-      console.log('Found duplicate relation');
       setSelectedElement({
         type: 'relation',
         element: existingRelation
@@ -651,7 +646,6 @@ const ConDecModeler = ({ width = '100%', height = '100%', style = {}, loadedFile
     const targetNode = diagram.nodes.find(n => n.id === targetId);
 
     if (!sourceNode || !targetNode) {
-      console.log('Source or target node not found');
       setNewRelation(null);
       return;
     }
@@ -681,8 +675,6 @@ const ConDecModeler = ({ width = '100%', height = '100%', style = {}, loadedFile
       targetId,
       waypoints
     };
-
-    console.log('New relation object:', newRelationObj);
 
     const commandStack = getCommandStack();
     const command = new CreateRelationCommand(newRelationObj, getDiagram, setDiagram);
