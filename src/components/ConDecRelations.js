@@ -25,7 +25,7 @@ export function ConDecRelation({
   const dragOffsetRef = React.useRef(null);
   const relationLabel = getRelationLabel(relation.type);
   const { style, negation, pathStyle } = getRelationVisual(relation.type, isSelected);
-  const { startMarkerId, endMarkerId } = getRelationMarkerIds(relation.type);
+  const { startMarkerId, endMarkerId } = getRelationMarkerIds(relation.type, isSelected);
   let pathData = '';
   if (currentWaypoints.length >= 2) {
     pathData = generatePath(currentWaypoints);
@@ -407,7 +407,7 @@ export function ConDecRelation({
         cx={midPoint?.x}
         cy={midPoint?.y}
         r="3"
-        fill="transparent"
+        fill="none"
         className="alignment-target relation-midpoint"
         data-alignment-x={midPoint?.x}
         data-alignment-y={midPoint?.y}
@@ -417,7 +417,7 @@ export function ConDecRelation({
       {/* Invisible wider path for easier selection - always rendered first */}
       <path
         d={pathData}
-        stroke="transparent"
+        stroke="none"
         strokeWidth={10/zoom}
         fill="none"
         pointerEvents="stroke"
@@ -440,7 +440,7 @@ export function ConDecRelation({
         <path
           d={generatePath(currentWaypoints)}
           fill="none"
-          stroke="transparent"
+          stroke="none"
           strokeWidth={style.strokeWidth || 1.5}
           markerEnd={endMarkerId}
           markerStart={startMarkerId}
@@ -527,20 +527,22 @@ export function ConDecRelation({
           onMouseDown={isSelected ? handleLabelMouseDown : handleRelationClick}
           pointerEvents="all"
         >
-          {/* Background rect for easier selection */}
-          <rect
-            x={labelX - 40}
-            y={labelY - 18}
-            width={80} 
-            height={15}
-            fill={isSelected ? "rgba(255,255,255,0.7)" : "transparent"}
-            stroke={isSelected ? "#1a73e8" : "transparent"}
-            strokeWidth={isSelected ? 1 : 0}
-            strokeDasharray={isSelected ? "2,1" : "0"}
-            rx={4}
-            ry={4}
-            pointerEvents="all"
-          />
+          {/* Background rect for easier selection - only render when selected */}
+          {isSelected && (
+            <rect
+              x={labelX - 40}
+              y={labelY - 18}
+              width={80} 
+              height={15}
+              fill="rgba(255,255,255,0.7)"
+              stroke="#1a73e8"
+              strokeWidth={1}
+              strokeDasharray="2,1"
+              rx={4}
+              ry={4}
+              pointerEvents="all"
+            />
+          )}
           {renderRelationLabel(relation, midPoint, zoom)}
         </g>
       )}

@@ -33,7 +33,7 @@ export function renderMultiSelectBoundingBox({ multiSelectedNodes, multiSelected
           y={box.y - 10}
           width={box.width + 20}
           height={box.height + 20}
-          fill="transparent"
+          fill="none"
           stroke="#4285f4"
           strokeWidth={2/zoom}
           strokeDasharray={`${4/zoom},${2/zoom}`}
@@ -60,7 +60,7 @@ export function renderMultiSelectBoundingBox({ multiSelectedNodes, multiSelected
           y={box.y - 10}
           width={box.width + 20}
           height={box.height + 20}
-          fill="transparent"
+          fill="none"
           stroke="#4285f4"
           strokeWidth={2/zoom}
           strokeDasharray={`${4/zoom},${2/zoom}`}

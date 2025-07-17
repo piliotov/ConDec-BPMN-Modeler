@@ -818,6 +818,8 @@ const ConDecModeler = ({ width = '100%', height = '100%', style = {}, loadedFile
     // Create a new SVG element for export with calculated dimensions
     const exportSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
     exportSvg.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+    exportSvg.setAttribute('xmlns:xlink', 'http://www.w3.org/1999/xlink');
+    exportSvg.setAttribute('version', '1.1');
     exportSvg.setAttribute('width', bounds.width);
     exportSvg.setAttribute('height', bounds.height);
     exportSvg.setAttribute('viewBox', `${bounds.x} ${bounds.y} ${bounds.width} ${bounds.height}`);
@@ -825,7 +827,31 @@ const ConDecModeler = ({ width = '100%', height = '100%', style = {}, loadedFile
     // Copy all the defs (markers, patterns, etc.) from the original SVG
     const originalDefs = originalSvg.querySelector('defs');
     if (originalDefs) {
-      exportSvg.appendChild(originalDefs.cloneNode(true));
+      const clonedDefs = originalDefs.cloneNode(true);
+      // Ensure all markers in defs have explicit fill colors for PDF compatibility
+      const markers = clonedDefs.querySelectorAll('marker');
+      markers.forEach(marker => {
+        const paths = marker.querySelectorAll('path');
+        const circles = marker.querySelectorAll('circle');
+        const lines = marker.querySelectorAll('line');
+        
+        paths.forEach(path => {
+          if (!path.getAttribute('fill') || path.getAttribute('fill') === 'currentColor') {
+            path.setAttribute('fill', '#555555');
+          }
+        });
+        circles.forEach(circle => {
+          if (!circle.getAttribute('fill') || circle.getAttribute('fill') === 'currentColor') {
+            circle.setAttribute('fill', '#555555');
+          }
+        });
+        lines.forEach(line => {
+          if (!line.getAttribute('stroke') || line.getAttribute('stroke') === 'currentColor') {
+            line.setAttribute('stroke', '#555555');
+          }
+        });
+      });
+      exportSvg.appendChild(clonedDefs);
     }
 
     // Create a group element to contain all diagram elements without viewport transforms
