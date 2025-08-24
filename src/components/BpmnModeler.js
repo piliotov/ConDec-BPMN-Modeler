@@ -127,7 +127,7 @@ const BpmnModeler = ({ loadedFile }) => {
     <div className="modeler-wrapper" style={{ height: '100%', display: 'flex', flexDirection: 'column', background: "#f4f7fb" }}>
       <div className="button-container" style={{ background: "#f7fafd", borderBottom: "1px solid #e3eaf3" }}>
         <ModelerButton onClick={handleNew} title="New BPMN Diagram">New</ModelerButton>
-        <ModelerButton onClick={handleSave} title="Export BPMN XML">Export</ModelerButton>
+        <ModelerButton onClick={handleSave} title="Export BPMN XML">Export BPMN</ModelerButton>
         <ModelerButton onClick={handleExportSVG} title="Export SVG">Export SVG</ModelerButton>
         <ModelerButton onClick={handleCenterCanvas} title="Center Canvas">Center Canvas</ModelerButton>
         <label className="modeler-btn import" title="Import BPMN XML">
