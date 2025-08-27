@@ -49,11 +49,11 @@ export function ConDecNodeMenu({
     justifyContent: 'center',
     width: `${ICON_SIZE}px`,
     height: `${ICON_SIZE}px`,
-    background: '#f7fafd',
-    border: '1px solid #b0b8c1',
+    background: 'transparent',
+    border: 'none',
     margin: '0 2px',
     cursor: 'pointer',
-    transition: 'none',
+    transition: 'all 0.2s ease',
     outline: 'none',
     padding: 0
   };
@@ -62,10 +62,15 @@ export function ConDecNodeMenu({
     <>
       <style>
         {`
+          .condec-context-btn {
+            position: relative;
+            background: transparent !important;
+            border: none !important;
+          }
           .condec-context-btn:hover {
-            opacity: 0.7;
-            background: #e3eaf3;
-            border-color: #1976d2;
+            background: rgba(25, 118, 210, 0.1) !important;
+            border: none !important;
+            border-radius: 4px;
           }
         `}
       </style>
@@ -74,8 +79,8 @@ export function ConDecNodeMenu({
         style={{ pointerEvents: 'all' }}
         transform={`translate(${baseX},${baseY}) scale(${1/zoom})`}
       >
-        <foreignObject x={0} y={0} width={ICON_SIZE * 4} height={ICON_SIZE * 2 + 32}>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 4, background: 'none', pointerEvents: 'all', alignItems: 'left' }}>
+        <foreignObject x={0} y={0} width={ICON_SIZE * 4} height={ICON_SIZE * 2 + 32} style={{ overflow: 'visible' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 4, background: 'none', pointerEvents: 'all' }}>
             {/* First row: edit, append, delete */}
             <div style={{ display: 'flex', gap: 4 }}>
               {actions.map(([key, action]) => (

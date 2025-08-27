@@ -372,18 +372,23 @@
 .condec-context-btn,
 .bpmn-context-pad button,
 .bpmn-context-pad .condec-context-btn {
-  background: #fff !important;
+  background: transparent !important;
   border: none !important;
   color: #183153;
-  transition: background 0.15s, border 0.15s;
+  transition: background 0.15s;
+  position: static !important;
+  transform: none !important;
 }
 .condec-context-btn:hover,
 .bpmn-context-pad button:hover,
 .bpmn-context-pad .condec-context-btn:hover {
-  background: #e3eaf3 !important;
+  background: rgba(25, 118, 210, 0.1) !important;
   border: none !important;
+  border-radius: 4px;
   color: #1976d2;
-  opacity: 0.8;
+  opacity: 1;
+  position: static !important;
+  transform: none !important;
 }
 .modeler-btn,
 .modeler-btn.import {
