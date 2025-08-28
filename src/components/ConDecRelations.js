@@ -224,11 +224,23 @@ export function ConDecRelation({
 
   const handleLabelMouseDown = (e) => {
     e.stopPropagation();
+    
+    // Clear any text selection
+    if (window.getSelection) {
+      window.getSelection().removeAllRanges();
+    }
+    
     setIsDraggingLabel(true);
   };
   
   const handleRelationClick = (e) => {
     e.stopPropagation();
+    
+    // Only clear text selection, don't prevent default click behavior
+    if (window.getSelection) {
+      window.getSelection().removeAllRanges();
+    }
+    
     if (draggedWaypointIndex === null) {
       onSelect(e);
     }
@@ -388,7 +400,10 @@ export function ConDecRelation({
         fontWeight={isSelected ? "bold" : "normal"}
         pointerEvents="none"
         style={{
-          userSelect: "none"
+          userSelect: "none",
+          WebkitUserSelect: "none",
+          MozUserSelect: "none",
+          msUserSelect: "none"
         }}
       >
         {relationLabel}
@@ -400,7 +415,14 @@ export function ConDecRelation({
     <g 
       className="condec-relation"
       onMouseDown={handleRelationClick}
-      style={{ cursor: 'pointer' }}
+      onClick={handleRelationClick}
+      style={{ 
+        cursor: 'pointer',
+        userSelect: 'none',
+        WebkitUserSelect: 'none',
+        MozUserSelect: 'none',
+        msUserSelect: 'none'
+      }}
     >
       {/* Add invisible alignment target at midpoint for alignment system */}
       <circle
@@ -417,10 +439,12 @@ export function ConDecRelation({
       {/* Invisible wider path for easier selection - always rendered first */}
       <path
         d={pathData}
-        stroke="none"
-        strokeWidth={10/zoom}
+        stroke="transparent"
+        strokeWidth={Math.max(10/zoom, 8)}
         fill="none"
         pointerEvents="stroke"
+        onMouseDown={handleRelationClick}
+        style={{ cursor: 'pointer' }}
       />
 
       {/* Main center path with markers (always render for markers, even if alt, but invisible for alt) */}
@@ -431,7 +455,9 @@ export function ConDecRelation({
           {...style}
           markerEnd={endMarkerId}
           markerStart={startMarkerId}
-          pointerEvents="none"
+          pointerEvents="stroke"
+          onMouseDown={handleRelationClick}
+          style={{ cursor: 'pointer' }}
         />
       )}
 
@@ -466,7 +492,9 @@ export function ConDecRelation({
               d={generatePath(trimSideLine(offsetPolyline(currentWaypoints, off)))}
               fill="none"
               {...style}
-              pointerEvents="none"
+              pointerEvents="stroke"
+              onMouseDown={handleRelationClick}
+              style={{ cursor: 'pointer' }}
             />
           ));
         }
@@ -477,7 +505,9 @@ export function ConDecRelation({
               d={generatePath(trimSideLine(offsetPolyline(currentWaypoints, off)))}
               fill="none"
               {...style}
-              pointerEvents="none"
+              pointerEvents="stroke"
+              onMouseDown={handleRelationClick}
+              style={{ cursor: 'pointer' }}
             />
           ));
         }
@@ -525,7 +555,7 @@ export function ConDecRelation({
           className="condec-relation-label" 
           cursor={isSelected ? "move" : "pointer"}
           onMouseDown={isSelected ? handleLabelMouseDown : handleRelationClick}
-          pointerEvents="all"
+          pointerEvents={isSelected ? "all" : "none"}
         >
           {/* Background rect for easier selection - only render when selected */}
           {isSelected && (

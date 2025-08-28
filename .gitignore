@@ -1,18 +1,12 @@
-# Node modules and cache
 node_modules/
 .cache/
 dist/
 build/
 docs/
-
-# Logs
 *.log
-
-# OS/System files
 .DS_Store
 Thumbs.db
-
-# Environment variables
 .env
 .env.local
-
+undo_command.jpg
+Abstract_UML.png
