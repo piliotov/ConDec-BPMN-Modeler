@@ -1,3 +1,5 @@
+import React from 'react';
+
 export function RelationMarkers() {
   return (
     <defs>
@@ -10,6 +12,7 @@ export function RelationMarkers() {
         markerHeight="6"
         orient="auto-start-reverse"
         preserveAspectRatio="xMidYMid meet"
+        markerUnits="strokeWidth"
       >
         <path d="M 0 0 L 10 5 L 0 10 z" fill="#555555" stroke="none" />
       </marker>
@@ -22,6 +25,7 @@ export function RelationMarkers() {
         markerHeight="6"
         orient="auto-start-reverse"
         preserveAspectRatio="xMidYMid meet"
+        markerUnits="strokeWidth"
       >
         <path d="M 10 0 L 0 5 L 10 10 z" fill="#555555" stroke="none" />
       </marker>
@@ -34,6 +38,7 @@ export function RelationMarkers() {
         markerHeight="6"
         orient="auto"
         preserveAspectRatio="xMidYMid meet"
+        markerUnits="strokeWidth"
       >
         <circle cx="5" cy="5" r="5" fill="#555555" stroke="none" />
       </marker>
@@ -46,6 +51,7 @@ export function RelationMarkers() {
         markerHeight="6"
         orient="auto"
         preserveAspectRatio="xMidYMid meet"
+        markerUnits="strokeWidth"
       >
         <circle cx="5" cy="5" r="5" fill="#555555" stroke="none" />
       </marker>
@@ -58,6 +64,7 @@ export function RelationMarkers() {
         markerHeight="6"
         orient="auto"
         preserveAspectRatio="xMidYMid meet"
+        markerUnits="strokeWidth"
       >
         <g>
           <path d="M 0 0 L 10 5 L 0 10 z" fill="#555555" stroke="none" />
@@ -75,6 +82,7 @@ export function RelationMarkers() {
         markerHeight="6"
         orient="auto-start-reverse"
         preserveAspectRatio="xMidYMid meet"
+        markerUnits="strokeWidth"
       >
         <path d="M 0 0 L 10 5 L 0 10 z" fill="#1a73e8" stroke="none" />
       </marker>
@@ -87,6 +95,7 @@ export function RelationMarkers() {
         markerHeight="6"
         orient="auto-start-reverse"
         preserveAspectRatio="xMidYMid meet"
+        markerUnits="strokeWidth"
       >
         <path d="M 10 0 L 0 5 L 10 10 z" fill="#1a73e8" stroke="none" />
       </marker>
@@ -99,6 +108,7 @@ export function RelationMarkers() {
         markerHeight="6"
         orient="auto"
         preserveAspectRatio="xMidYMid meet"
+        markerUnits="strokeWidth"
       >
         <circle cx="5" cy="5" r="5" fill="#1a73e8" stroke="none" />
       </marker>
@@ -111,6 +121,7 @@ export function RelationMarkers() {
         markerHeight="6"
         orient="auto"
         preserveAspectRatio="xMidYMid meet"
+        markerUnits="strokeWidth"
       >
         <circle cx="5" cy="5" r="5" fill="#1a73e8" stroke="none" />
       </marker>
@@ -123,6 +134,7 @@ export function RelationMarkers() {
         markerHeight="6"
         orient="auto"
         preserveAspectRatio="xMidYMid meet"
+        markerUnits="strokeWidth"
       >
         <g>
           <path d="M 0 0 L 10 5 L 0 10 z" fill="#1a73e8" stroke="none" />
@@ -140,6 +152,7 @@ export function RelationMarkers() {
         markerHeight="8"
         orient="auto"
         preserveAspectRatio="xMidYMid meet"
+        markerUnits="strokeWidth"
       >
         <g>
           <line x1="6" y1="6" x2="18" y2="18" stroke="#555555" strokeWidth="3" fill="none" />

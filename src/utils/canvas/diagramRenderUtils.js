@@ -183,7 +183,7 @@ export const renderDiagramElements = ({
           };
     return (
       <ConDecRelation
-        key={relation.id}
+        key={`relation-${relation.id}-${isSelected ? 'selected' : 'unselected'}`}
         relation={relation}
         sourceNode={sourceNode}
         targetNode={targetNode}
@@ -217,6 +217,7 @@ export const renderDiagramElements = ({
           isMultiSelected={!!isMultiSelected}
           isNarySelected={isNarySelected}
           mode={props.mode}
+          zoom={zoom}
           onSelect={(e) => {
             // addRelation mode
             if (props.mode === 'addRelation') {

@@ -57,6 +57,43 @@ const ConDecModeler = ({ width = '100%', height = '100%', style = {}, loadedFile
 
   const [narySelectedNodes, setNarySelectedNodes] = useState([]);
   const [naryDiamondPos, setNaryDiamondPos] = useState(null);
+  const [refreshKey, setRefreshKey] = useState(0);
+
+  const refreshConDecElements = useCallback(() => {
+    setRefreshKey(prev => prev + 1);
+  }, []);
+
+  useEffect(() => {
+    if (selectedElement) {
+      const timeoutId = setTimeout(() => {
+        refreshConDecElements();
+      }, 50);
+      return () => clearTimeout(timeoutId);
+    }
+  }, [selectedElement, refreshConDecElements]);
+
+  useEffect(() => {
+    if (diagram) {
+      const timeoutId = setTimeout(() => {
+        refreshConDecElements();
+      }, 100);
+      return () => clearTimeout(timeoutId);
+    }
+  }, [diagram, refreshConDecElements]);
+
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'r' && !e.shiftKey) {
+        e.preventDefault();
+        refreshConDecElements();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [refreshConDecElements]);
 
   const handleMenuSizeChange = useCallback((size) => {
     if (size && size.width && size.height) {
@@ -1245,6 +1282,7 @@ const ConDecModeler = ({ width = '100%', height = '100%', style = {}, loadedFile
           getDiagram={getDiagram}
           onMouseUpWithCommands={handleMouseUpWithCommands}
           narySelectedNodes={narySelectedNodes}
+          refreshKey={refreshKey}
         />
         {editNodePopup && (
           <NodeEditMenu

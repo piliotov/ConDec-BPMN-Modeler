@@ -21,6 +21,8 @@ export function ConDecNode({
   onDragStart,
   onRename,
   onRenameBlur,
+  onSize,
+  zoom = 1, // Add zoom prop
 }) {
   const [editing, setEditing] = useState(!!node.editing);
   const [editValue, setEditValue] = useState(node.name);
@@ -237,26 +239,29 @@ export function ConDecNode({
           y={-nodeHeight/2 + 12}
           width={nodeWidth}
           height={30}
-          style={{ zIndex: 1000 }}
+          style={{ 
+            overflow: 'visible',
+            pointerEvents: 'auto'
+          }}
         >
           <input
             ref={inputRef}
             type="text"
             value={editValue}
             style={{
-              width: '98%',
-              fontSize: '10px',
+              width: '100%',
+              height: '100%',
+              fontSize: `${12/zoom}px`,
               fontWeight: 'normal',
-              padding: '4px',
+              padding: `${4/zoom}px`,
               border: 'none',
-              borderRadius: '4px',
+              borderRadius: `${4/zoom}px`,
               textAlign: 'center',
               backgroundColor: '#fff',
-              boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
-              zIndex: 1001,
-              position: 'relative',
-              top: '0',
-              left: '0',
+              boxShadow: `0 ${2/zoom}px ${4/zoom}px rgba(0,0,0,0.2)`,
+              outline: 'none',
+              boxSizing: 'border-box',
+              margin: 0,
             }}
             onChange={e => setEditValue(e.target.value)}
             onBlur={finishEditing}

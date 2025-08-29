@@ -413,6 +413,7 @@ export function ConDecRelation({
 
   return (
     <g 
+      key={`relation-${relation.id}-${isSelected ? 'selected' : 'unselected'}`}
       className="condec-relation"
       onMouseDown={handleRelationClick}
       onClick={handleRelationClick}
@@ -450,6 +451,7 @@ export function ConDecRelation({
       {/* Main center path with markers (always render for markers, even if alt, but invisible for alt) */}
       {(pathStyle !== 'alt') && (
         <path
+          key={`main-path-${relation.id}`}
           d={generatePath(currentWaypoints)}
           fill="none"
           {...style}
@@ -464,6 +466,7 @@ export function ConDecRelation({
       {/* For alt: render a center path only for markers */}
       {pathStyle === 'alt' && (startMarkerId || endMarkerId) && (
         <path
+          key={`alt-marker-path-${relation.id}`}
           d={generatePath(currentWaypoints)}
           fill="none"
           stroke="none"

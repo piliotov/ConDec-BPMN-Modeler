@@ -1,4 +1,4 @@
-import React, { useRef, useState, forwardRef, useImperativeHandle, useEffect } from 'react';
+import React, { useRef, useState, useImperativeHandle, useEffect } from 'react';
 import {
   useCanvasPanning,
   RelationMarkers,
@@ -18,41 +18,125 @@ import {
 import { getAlignmentGuidesForPoint, renderAlignmentGuidesSVG } from '../utils/canvas/alignmentUtils';
 
 
-export const ConDecCanvas = forwardRef(function ConDecCanvas(props, ref) {
-  const {
-    diagram,
-    selectedElement,
-    mode,
-    onNodeEdit,
-    onRelationEdit,
-    setMousePosition,
-    draggedElement,
-    setDraggedElement,
-    onCanvasClick,
-    canvasOffset = { x: 0, y: 0 },
-    setCanvasOffset,
-    onSelectionMouseMove,
-    zoom = 1,
-    onCanvasWheel,
-    selectionBox,
-    isPanning = false,
-    setIsPanning,
-    setPanStart,
-    setPanOrigin,
-    multiSelectedNodes = [],
-    multiSelectedElements = { nodes: [], relationPoints: [], naryDiamonds: [] },
-    commandStack,
-    setDiagram,
-    naryStartNode,
-    naryMouse,
-    narySelectedNodes = [],
-    onNaryRelationClick,
-    getDiagram,
-  } = props;
+export const ConDecCanvas = React.forwardRef(({
+  diagram,
+  selectedElement,
+  mode,
+  onSelectElement,
+  onNodeRename,
+  onRelationCreate,
+  onNodeEdit,
+  onRelationEdit,
+  newRelation,
+  setNewRelation,
+  mousePosition,
+  setMousePosition,
+  draggedElement,
+  setDraggedElement,
+  onCanvasClick,
+  canvasOffset = { x: 0, y: 0 },
+  setCanvasOffset,
+  onCanvasMouseDown,
+  onSelectionMouseMove,
+  onSelectionMouseUp,
+  zoom = 1,
+  onCanvasWheel,
+  selectionBox,
+  setSelectionBox,
+  multiSelectedNodes = [],
+  setMultiSelectedNodes,
+  multiSelectedElements = [],
+  setMultiSelectedElements,
+  onNodeMenuEdit,
+  onNodeMenuDelete,
+  onNodeMenuClose,
+  isPanning,
+  setIsPanning,
+  panStart,
+  setPanStart,
+  panOrigin,
+  setPanOrigin,
+  onNodeDragStart,
+  onNodeDrag,
+  onAppend,
+  setMode,
+  onDeleteMultiSelected,
+  onDeleteMultiSelectedExtended,
+  naryStartNode,
+  setNaryStartNode,
+  naryMouse,
+  onNaryRelationClick,
+  onCanvasMouseMove,
+  hologramNodePosition,
+  commandStack,
+  setDiagram,
+  getDiagram,
+  onMouseUpWithCommands,
+  narySelectedNodes,
+  refreshKey
+}, ref) => {
 
   const svgRef = useRef();
 
   useImperativeHandle(ref, () => svgRef.current, []);
+
+  const props = {
+    diagram,
+    selectedElement,
+    mode,
+    onSelectElement,
+    onNodeRename,
+    onRelationCreate,
+    onNodeEdit,
+    onRelationEdit,
+    newRelation,
+    setNewRelation,
+    mousePosition,
+    setMousePosition,
+    draggedElement,
+    setDraggedElement,
+    onCanvasClick,
+    canvasOffset,
+    setCanvasOffset,
+    onCanvasMouseDown,
+    onSelectionMouseMove,
+    onSelectionMouseUp,
+    zoom,
+    onCanvasWheel,
+    selectionBox,
+    setSelectionBox,
+    multiSelectedNodes,
+    setMultiSelectedNodes,
+    multiSelectedElements,
+    setMultiSelectedElements,
+    onNodeMenuEdit,
+    onNodeMenuDelete,
+    onNodeMenuClose,
+    isPanning,
+    setIsPanning,
+    panStart,
+    setPanStart,
+    panOrigin,
+    setPanOrigin,
+    onNodeDragStart,
+    onNodeDrag,
+    onAppend,
+    setMode,
+    onDeleteMultiSelected,
+    onDeleteMultiSelectedExtended,
+    naryStartNode,
+    setNaryStartNode,
+    naryMouse,
+    onNaryRelationClick,
+    onCanvasMouseMove,
+    hologramNodePosition,
+    commandStack,
+    setDiagram,
+    getDiagram,
+    onMouseUpWithCommands,
+    narySelectedNodes,
+    refreshKey
+  };
 
   const [alignmentGuides, setAlignmentGuides] = useState({ x: null, y: null });
   const [connectFromNodeMenu, setConnectFromNodeMenu] = useState(null);
@@ -615,7 +699,7 @@ export const ConDecCanvas = forwardRef(function ConDecCanvas(props, ref) {
         onContextMenu={(e) => e.preventDefault()}
         style={{ cursor: cursorStyle, userSelect: 'none' }}
       >
-        <RelationMarkers />
+        <RelationMarkers key={`markers-${refreshKey}`} />
         <g transform={`translate(${canvasOffset.x},${canvasOffset.y}) scale(${zoom})`}>
           {alignmentGuides.x !== null && (
             <line
