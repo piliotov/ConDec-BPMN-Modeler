@@ -114,7 +114,6 @@ export function NaryRelation({ relation, allNodes, zoom, canvasOffset, isSelecte
 
   return (
     <g className="nary-relation">
-      {/* Render connections from each node to the diamond */}
       {relation.activities.map((activityName, index) => {
         const node = allNodes.find(n => n.name === activityName || n.id === activityName);
         if (!node) return null;
@@ -133,7 +132,6 @@ export function NaryRelation({ relation, allNodes, zoom, canvasOffset, isSelecte
         );
     })}
     
-    {/* Custom SVG diamond shape with alignment support */}
     <g
       transform={`translate(${relation.diamondPos.x},${relation.diamondPos.y}) scale(0.7) rotate(90)`}
       onClick={onSelect}
@@ -142,7 +140,6 @@ export function NaryRelation({ relation, allNodes, zoom, canvasOffset, isSelecte
       data-alignment-y={relation.diamondPos.y}
       className="alignment-target nary-diamond"
       onMouseDown={(e) => {
-        // Connect to the canvas diamond drag handler
         e.stopPropagation();
         if (handleNaryDiamondInteractionStart) {
           handleNaryDiamondInteractionStart(relation.id, relation.diamondPos.x, relation.diamondPos.y, e);
@@ -157,7 +154,6 @@ export function NaryRelation({ relation, allNodes, zoom, canvasOffset, isSelecte
       />
     </g>
     
-    {/* Label */}
       <text
         x={relation.diamondPos.x}
         y={relation.diamondPos.y + 2}

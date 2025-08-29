@@ -1,4 +1,3 @@
-// Mouse handling utilities for ConDecCanvas
 import { updateRelationsForNode } from '../relations/relationUtils';
 import { getAlignmentGuides } from './index';
 import { MoveNodeCommand } from '../commands/DiagramCommands';

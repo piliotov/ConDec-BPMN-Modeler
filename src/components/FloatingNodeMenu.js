@@ -81,7 +81,6 @@ export function ConDecNodeMenu({
       >
         <foreignObject x={0} y={0} width={ICON_SIZE * 4} height={ICON_SIZE * 2 + 32} style={{ overflow: 'visible' }}>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 4, background: 'none', pointerEvents: 'all' }}>
-            {/* First row: edit, append, delete */}
             <div style={{ display: 'flex', gap: 4 }}>
               {actions.map(([key, action]) => (
                 <button
@@ -100,7 +99,6 @@ export function ConDecNodeMenu({
                 </button>
               ))}
             </div>
-            {/* Second row: connect (arrow) */}
             <div style={{ display: 'flex', gap: 4, marginTop: 4 }}>
               <button
                 className={btnClass}

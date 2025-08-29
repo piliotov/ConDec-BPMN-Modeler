@@ -224,9 +224,7 @@ export function ConDecRelation({
 
   const handleLabelMouseDown = (e) => {
     e.stopPropagation();
-    
-    // Clear any text selection
-    if (window.getSelection) {
+      if (window.getSelection) {
       window.getSelection().removeAllRanges();
     }
     
@@ -236,7 +234,6 @@ export function ConDecRelation({
   const handleRelationClick = (e) => {
     e.stopPropagation();
     
-    // Only clear text selection, don't prevent default click behavior
     if (window.getSelection) {
       window.getSelection().removeAllRanges();
     }
@@ -425,7 +422,6 @@ export function ConDecRelation({
         msUserSelect: 'none'
       }}
     >
-      {/* Add invisible alignment target at midpoint for alignment system */}
       <circle
         cx={midPoint?.x}
         cy={midPoint?.y}
@@ -437,7 +433,6 @@ export function ConDecRelation({
         pointerEvents="none"
       />
 
-      {/* Invisible wider path for easier selection - always rendered first */}
       <path
         d={pathData}
         stroke="transparent"
@@ -448,7 +443,6 @@ export function ConDecRelation({
         style={{ cursor: 'pointer' }}
       />
 
-      {/* Main center path with markers (always render for markers, even if alt, but invisible for alt) */}
       {(pathStyle !== 'alt') && (
         <path
           key={`main-path-${relation.id}`}
@@ -463,7 +457,6 @@ export function ConDecRelation({
         />
       )}
 
-      {/* For alt: render a center path only for markers */}
       {pathStyle === 'alt' && (startMarkerId || endMarkerId) && (
         <path
           key={`alt-marker-path-${relation.id}`}
@@ -477,10 +470,8 @@ export function ConDecRelation({
         />
       )}
 
-      {/* Parallel lines for alt/chain, trimmed at ends, no markers */}
       {(() => {
-        const offset = 3; // px
-        // Use larger trim for side lines so they end before markers
+        const offset = 3;
         const trimStart = getMarkerOffsetForId(startMarkerId, false);
         const trimEnd = getMarkerOffsetForId(endMarkerId, true, startMarkerId);
 
@@ -517,7 +508,6 @@ export function ConDecRelation({
         return null;
       })()}
 
-      {/* Render negation marker at midpoint */}
       {negation && (() => {
         let angle = 0;
         if (currentWaypoints.length >= 2) {

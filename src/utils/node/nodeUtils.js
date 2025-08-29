@@ -36,18 +36,14 @@ export function isRelationAllowed(diagram, sourceId, targetId, relationType = 'r
   const targetNode = diagram.nodes.find(n => n.id === targetId);
   
   if (!sourceNode || !targetNode) return false;
-
-  // Check if it's a negative relation type
   const isNegativeRelation = relationType && (
     relationType.includes('neg_') || 
     relationType.includes('resp_absence') || 
     relationType.includes('not_coexistence')
   );
 
-  // INIT constraint logic
   if (targetNode.constraint === CONSTRAINTS.INIT) {
-    // INIT nodes cannot have any incoming positive relations
-    if (!isNegativeRelation) return false;
+        if (!isNegativeRelation) return false;
       switch (relationType) {
       case 'resp_absence':       
       case 'not_coexistence':
@@ -133,7 +129,6 @@ export function isRelationAllowed(diagram, sourceId, targetId, relationType = 'r
       case CONSTRAINTS.ABSENCE:
         return false;
       case CONSTRAINTS.ABSENCE_N:
-        // Can have at most N positive incoming relations
         const maxAllowed = targetNode.constraintValue || 0;
         return incomingCount < maxAllowed;
       case CONSTRAINTS.EXACTLY_N:
@@ -157,7 +152,6 @@ export function isRelationAllowed(diagram, sourceId, targetId, relationType = 'r
       case CONSTRAINTS.EXISTENCE_N:
         return true;
       case CONSTRAINTS.INIT:
-        // Already handled above
         return false;
       default:
         return true;
@@ -165,7 +159,6 @@ export function isRelationAllowed(diagram, sourceId, targetId, relationType = 'r
   }
 }
 
-// Helper function to determine if a relation type is negative/restrictive
 function isNegativeRelationType(relationType) {
   return relationType && (
     relationType.includes('neg_') || 

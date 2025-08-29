@@ -172,8 +172,6 @@ export function isRelationAllowed(diagram, sourceId, targetId, relationType = 'r
   const targetNode = diagram.nodes.find(n => n.id === targetId);
   
   if (!sourceNode || !targetNode) return false;
-
-  // Check if it's a negative relation type
   const isNegativeRelation = relationType && (
     relationType.includes('neg_') || 
     relationType.includes('resp_absence') || 

@@ -286,7 +286,6 @@ export function RelationEditMenu({
       </div>
       
       <div className="property-group" style={{ marginBottom: 10 }}>
-        {/* Source-Target Direction Control */}
         <div className="relation-direction-control" style={{
           display: 'flex',
           alignItems: 'center',
@@ -300,7 +299,6 @@ export function RelationEditMenu({
           <div style={{ flex: 1, textAlign: 'right', fontWeight: 'bold', fontSize: 'clamp(10px, 1.2vw, 12px)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
             {sourceNode?.name || 'Source'}
           </div>
-          {/* Single arrow button for direction */}
           <button 
             onClick={handleReverseRelation}
             style={{
@@ -319,7 +317,6 @@ export function RelationEditMenu({
             }}
             title="Reverse relation direction"
           >
-            {/* Single arrow icon*/}
             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#000000" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <line x1="5" y1="12" x2="19" y2="12"/>
               <polyline points="12 5 19 12 12 19"/>
@@ -330,7 +327,6 @@ export function RelationEditMenu({
           </div>
         </div>
         
-        {/* Source Node Selection */}
         <label style={{ display: 'block', marginBottom: 3, fontWeight: 500, fontSize: 'clamp(11px, 1.4vw, 13px)' }}>Source:</label>
         <select
           value={sourceNodeId}
@@ -351,7 +347,6 @@ export function RelationEditMenu({
           ))}
         </select>
         
-        {/* Target Node Selection */}
         <label style={{ display: 'block', marginBottom: 3, fontWeight: 500, fontSize: 'clamp(11px, 1.4vw, 13px)' }}>Target:</label>
         <select
           value={targetNodeId}
@@ -372,7 +367,6 @@ export function RelationEditMenu({
           ))}
         </select>
         
-        {/* Relation Type Selection */}
         <label style={{ display: 'block', marginBottom: 3, fontWeight: 500, fontSize: 'clamp(11px, 1.4vw, 13px)' }}>Type:</label>
         <select
           value={relationType}
@@ -389,7 +383,6 @@ export function RelationEditMenu({
           {renderRelationOptions()}
         </select>
         
-        {/* Relation Description */}
         <div style={{
           padding: '4px',
           background: '#f8f9fa',
@@ -405,7 +398,6 @@ export function RelationEditMenu({
           {relationDescriptions[relationType]}
         </div>
       </div>
-      {/* Show/Hide Label Toggle */}
         <div style={{ display: 'flex', alignItems: 'center', margin: '10px 0 10px 0', gap: 10 }}>
           <span style={{ fontWeight: 500, fontSize: 'clamp(11px, 1.2vw, 12px)' }}>
             Show Label

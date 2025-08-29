@@ -14,8 +14,6 @@ export function validateNodeConstraint(node, diagram) {
 
   switch (node.constraint) {
     case CONSTRAINTS.ABSENCE:
-      // Absence constraint: activity cannot be executed
-      // Valid: No positive incoming relations (negative relations are allowed as they reinforce the restriction)
       const absenceValid = incomingCount === 0;
       return { 
         valid: absenceValid, 
@@ -25,8 +23,6 @@ export function validateNodeConstraint(node, diagram) {
       };
       
     case CONSTRAINTS.ABSENCE_N:
-      // Absence(N) constraint: activity can be executed at most N times
-      // Valid: At most N positive incoming relations (negative relations don't count toward limit)
       const maxAllowed = node.constraintValue || 0;
       const absenceNValid = incomingCount <= maxAllowed;
       return { 
@@ -38,8 +34,6 @@ export function validateNodeConstraint(node, diagram) {
       };
       
     case CONSTRAINTS.EXISTENCE_N:
-      // Existence(N) constraint: activity must be executed at least N times
-      // Valid: At least N positive incoming relations (negative relations can coexist)
       const minRequired = node.constraintValue || 0;
       const existenceValid = incomingCount >= minRequired;
       return { 
@@ -51,8 +45,6 @@ export function validateNodeConstraint(node, diagram) {
       };
       
     case CONSTRAINTS.EXACTLY_N:
-      // Exactly(N) constraint: activity must be executed exactly N times
-      // Valid: Exactly N positive incoming relations (negative relations can coexist)
       const exactRequired = node.constraintValue || 0;
       const exactlyValid = incomingCount === exactRequired;
       return { 
@@ -64,11 +56,8 @@ export function validateNodeConstraint(node, diagram) {
       };
       
     case CONSTRAINTS.INIT:
-      // Init constraint: activity must be the first to execute
-      // Valid: No positive incoming relations (specific negative relations are allowed)
       const initValid = incomingCount === 0;
       const invalidNegativeRelations = negativeIncomingRelations.filter(r => {
-        // Only certain negative relations are valid for INIT nodes
         return !['resp_absence', 'not_coexistence', 'neg_response', 'neg_succession', 'neg_chain_response', 'neg_chain_succession'].includes(r.type);
       });
       const hasInvalidNegative = invalidNegativeRelations.length > 0;

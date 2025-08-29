@@ -22,7 +22,7 @@ export function ConDecNode({
   onRename,
   onRenameBlur,
   onSize,
-  zoom = 1, // Add zoom prop
+  zoom = 1,
 }) {
   const [editing, setEditing] = useState(!!node.editing);
   const [editValue, setEditValue] = useState(node.name);
@@ -55,8 +55,6 @@ export function ConDecNode({
     setEditValue(node.name);
     if (node.editing) setEditing(true);
   }, [node.name, node.editing]);
-
-  // --- Prevent node deletion with Backspace when editing name ---
   useEffect(() => {
     if (!editing) return;
     const handleKeyDown = (e) => {
@@ -207,7 +205,6 @@ export function ConDecNode({
         style={{ cursor: mode === 'addRelation' ? 'crosshair' : 'pointer' }}
       />
 
-      {/* Constraint violation indicator */}
       {constraintViolated && (
         <g>
           <circle
@@ -266,7 +263,7 @@ export function ConDecNode({
             onChange={e => setEditValue(e.target.value)}
             onBlur={finishEditing}
             onKeyDown={e => {
-              e.stopPropagation(); // Prevent event bubbling
+              e.stopPropagation();
               if (e.key === 'Enter') {
                 e.preventDefault();
                 finishEditing();

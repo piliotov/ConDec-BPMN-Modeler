@@ -101,8 +101,6 @@ export function layoutConnection(sourceNode, targetNode, existingWaypoints = [])
   }
   const sourceSize = { width: 100, height: 50 };
   const targetSize = { width: 100, height: 50 };
-  
-  // Since we're using straight lines, just return direct connection
   const sourceDock = getDockingPoint(sourceNode, targetNode, sourceSize);
   const targetDock = getDockingPoint(targetNode, sourceNode, targetSize);
   return [

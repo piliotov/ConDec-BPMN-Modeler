@@ -496,7 +496,6 @@ const ConDecModeler = ({ width = '100%', height = '100%', style = {}, loadedFile
     };
   }, [selectedElement, handleDelete, handleUndo, handleRedo]);
 
-  // Clear nary selected nodes when mode changes away from 'nary'
   useEffect(() => {
     if (mode !== 'nary' && narySelectedNodes.length > 0) {
       setNarySelectedNodes([]);
@@ -798,7 +797,6 @@ const ConDecModeler = ({ width = '100%', height = '100%', style = {}, loadedFile
 
     const allPoints = [];
     
-    // Add all node bounds
     diagram.nodes.forEach(node => {
       const nodeWidth = node.width || 100;
       const nodeHeight = node.height || 50;
@@ -808,7 +806,6 @@ const ConDecModeler = ({ width = '100%', height = '100%', style = {}, loadedFile
       );
     });
 
-    // Add all relation waypoints
     if (diagram.relations) {
       diagram.relations.forEach(relation => {
         if (relation.waypoints && relation.waypoints.length > 0) {
@@ -817,7 +814,6 @@ const ConDecModeler = ({ width = '100%', height = '100%', style = {}, loadedFile
           });
         }
         
-        // Add n-ary diamond positions
         if (relation.diamondPos) {
           allPoints.push({ x: relation.diamondPos.x, y: relation.diamondPos.y });
         }
@@ -828,7 +824,7 @@ const ConDecModeler = ({ width = '100%', height = '100%', style = {}, loadedFile
       return { x: 0, y: 0, width: 800, height: 600 };
     }
 
-    const padding = 50; // Add some padding around the diagram
+    const padding = 50;
     const left = Math.min(...allPoints.map(p => p.x)) - padding;
     const right = Math.max(...allPoints.map(p => p.x)) + padding;
     const top = Math.min(...allPoints.map(p => p.y)) - padding;
@@ -837,22 +833,19 @@ const ConDecModeler = ({ width = '100%', height = '100%', style = {}, loadedFile
     return {
       x: left,
       y: top,
-      width: Math.max(right - left, 400), // Minimum width
-      height: Math.max(bottom - top, 300)  // Minimum height
+      width: Math.max(right - left, 400),
+      height: Math.max(bottom - top, 300)
     };
   };
 
   const handleExportSVG = () => {
     if (!diagram) return;
     
-    // Calculate the bounds of the entire diagram
     const bounds = calculateDiagramBounds(diagram);
     
-    // Get the current SVG element
     const originalSvg = document.querySelector('.condec-canvas');
     if (!originalSvg) return;
 
-    // Create a new SVG element for export with calculated dimensions
     const exportSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
     exportSvg.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
     exportSvg.setAttribute('xmlns:xlink', 'http://www.w3.org/1999/xlink');
@@ -861,11 +854,9 @@ const ConDecModeler = ({ width = '100%', height = '100%', style = {}, loadedFile
     exportSvg.setAttribute('height', bounds.height);
     exportSvg.setAttribute('viewBox', `${bounds.x} ${bounds.y} ${bounds.width} ${bounds.height}`);
 
-    // Copy all the defs (markers, patterns, etc.) from the original SVG
     const originalDefs = originalSvg.querySelector('defs');
     if (originalDefs) {
       const clonedDefs = originalDefs.cloneNode(true);
-      // Ensure all markers in defs have explicit fill colors for PDF compatibility
       const markers = clonedDefs.querySelectorAll('marker');
       markers.forEach(marker => {
         const paths = marker.querySelectorAll('path');
@@ -890,16 +881,10 @@ const ConDecModeler = ({ width = '100%', height = '100%', style = {}, loadedFile
       });
       exportSvg.appendChild(clonedDefs);
     }
-
-    // Create a group element to contain all diagram elements without viewport transforms
     const group = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-    
-    // Find the main diagram group in the original SVG (the one with the transform)
     const originalGroup = originalSvg.querySelector('g[transform]');
     if (originalGroup) {
-      // Copy all children of the transformed group, but without the viewport transform
       Array.from(originalGroup.children).forEach(child => {
-        // Skip alignment guides and UI elements we don't want in the export
         if (child.classList.contains('alignment-guides') || 
             child.classList.contains('multi-select-bounding-box') ||
             child.classList.contains('selection-box') ||
@@ -913,7 +898,6 @@ const ConDecModeler = ({ width = '100%', height = '100%', style = {}, loadedFile
 
     exportSvg.appendChild(group);
 
-    // Serialize and download
     const serializer = new XMLSerializer();
     const svgString = serializer.serializeToString(exportSvg);
     const blob = new Blob([svgString], { type: 'image/svg+xml' });
