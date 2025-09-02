@@ -301,6 +301,43 @@ export class UpdateRelationCommand extends Command {
     this.setDiagram(updatedDiagram);
   }
 }
+
+export class UpdateRelationWaypointsCommand extends Command {
+  constructor(relationId, newWaypoints, getDiagram, setDiagram, originalWaypoints = null) {
+    super(`Update relation waypoints: ${relationId}`);
+    this.relationId = relationId;
+    this.newWaypoints = [...newWaypoints];
+    this.getDiagram = getDiagram;
+    this.setDiagram = setDiagram;
+    if (originalWaypoints) {
+      this.originalWaypoints = [...originalWaypoints];
+    } else {
+      const diagram = getDiagram();
+      const relation = diagram.relations.find(r => r.id === relationId);
+      this.originalWaypoints = relation ? [...(relation.waypoints || [])] : [];
+    }
+  }
+  execute() {
+    const currentDiagram = this.getDiagram();
+    const updatedRelations = currentDiagram.relations.map(r =>
+      r.id === this.relationId ? { ...r, waypoints: this.newWaypoints } : r
+    );
+    this.setDiagram({
+      ...currentDiagram,
+      relations: updatedRelations
+    });
+  }
+  undo() {
+    const currentDiagram = this.getDiagram();
+    const updatedRelations = currentDiagram.relations.map(r =>
+      r.id === this.relationId ? { ...r, waypoints: this.originalWaypoints } : r
+    );
+    this.setDiagram({
+      ...currentDiagram,
+      relations: updatedRelations
+    });
+  }
+}
 export class AppendActivityCommand extends Command {
   constructor(sourceNode, newNode, newRelation, getDiagram, setDiagram) {
     super(`Append activity: ${newNode.name}`);

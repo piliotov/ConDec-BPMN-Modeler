@@ -1,4 +1,5 @@
 import React, { useRef, useState, useImperativeHandle, useEffect } from 'react';
+import { UpdateRelationWaypointsCommand } from '../utils/commands/DiagramCommands';
 import {
   useCanvasPanning,
   RelationMarkers,
@@ -77,6 +78,7 @@ export const ConDecCanvas = React.forwardRef(({
 }, ref) => {
 
   const svgRef = useRef();
+  const [draggedWaypoints, setDraggedWaypoints] = useState(null); // Track original waypoints during drag
 
   useImperativeHandle(ref, () => svgRef.current, []);
 
@@ -116,6 +118,11 @@ export const ConDecCanvas = React.forwardRef(({
       });
     }
   }, [refreshKey]);
+
+  // Clear dragged waypoints when mode changes or selection changes
+  useEffect(() => {
+    setDraggedWaypoints(null);
+  }, [mode, selectedElement]);
 
   const props = {
     diagram,
@@ -357,6 +364,17 @@ export const ConDecCanvas = React.forwardRef(({
   const handleWaypointDrag = (relationId, waypoints, updatedRelations) => {
     if (!relationId) return;
     
+    // Store original waypoints when drag starts (if not already stored)
+    if (!draggedWaypoints && diagram && Array.isArray(diagram.relations)) {
+      const relation = diagram.relations.find(r => r.id === relationId);
+      if (relation && relation.waypoints) {
+        setDraggedWaypoints({
+          relationId: relationId,
+          originalWaypoints: [...relation.waypoints]
+        });
+      }
+    }
+    
     requestAnimationFrame(() => {
       if (updatedRelations && diagram && Array.isArray(diagram.relations)) {
         const mergedRelations = diagram.relations.map(rel => {
@@ -383,6 +401,32 @@ export const ConDecCanvas = React.forwardRef(({
 
   const handleWaypointDragEnd = (relationId, isLabelDrag = false, prevWaypoints = null) => {
     if (!relationId) return;
+    
+    // Create command for undo/redo if we have original waypoints stored
+    if (draggedWaypoints && draggedWaypoints.relationId === relationId && commandStack && getDiagram && setDiagram) {
+      const currentDiagram = getDiagram();
+      const relation = currentDiagram.relations.find(r => r.id === relationId);
+      
+      if (relation && relation.waypoints) {
+        // Only create command if waypoints actually changed
+        const waypointsChanged = JSON.stringify(draggedWaypoints.originalWaypoints) !== JSON.stringify(relation.waypoints);
+        
+        if (waypointsChanged) {
+          const command = new UpdateRelationWaypointsCommand(
+            relationId,
+            relation.waypoints,
+            getDiagram,
+            setDiagram,
+            draggedWaypoints.originalWaypoints
+          );
+          commandStack.execute(command);
+        }
+      }
+    }
+    
+    // Clear the stored original waypoints
+    setDraggedWaypoints(null);
+    
     if (typeof onRelationEdit === 'function' && diagram && Array.isArray(diagram.relations)) {
       const relation = diagram.relations.find(r => r.id === relationId);
       const updatedRelations = diagram.relations.map(r =>

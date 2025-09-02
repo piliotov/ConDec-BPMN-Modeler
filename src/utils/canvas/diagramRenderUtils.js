@@ -183,7 +183,7 @@ export const renderDiagramElements = ({
           };
     return (
       <ConDecRelation
-        key={`relation-${relation.id}-${isSelected ? 'selected' : 'unselected'}-${relation.waypoints ? relation.waypoints.length : 0}-${sourceNode.x}-${sourceNode.y}-${targetNode.x}-${targetNode.y}`}
+        key={`relation-${relation.id}-${isSelected ? 'selected' : 'unselected'}`}
         relation={relation}
         sourceNode={sourceNode}
         targetNode={targetNode}

@@ -894,10 +894,8 @@ const ConDecModeler = ({ width = '100%', height = '100%', style = {}, loadedFile
       ...prev, 
       relations: updatedRelations 
     }));
-    // Force refresh to prevent trace artifacts
-    setTimeout(() => {
-      refreshConDecElements();
-    }, 5);
+    // Only force refresh for major changes, not during dragging
+    // This prevents interrupting waypoint drag operations
   };
   
   const handleAppendActivity = useCallback((node) => {
