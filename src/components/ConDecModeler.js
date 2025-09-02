@@ -88,10 +88,15 @@ const ConDecModeler = ({ width = '100%', height = '100%', style = {}, loadedFile
         // Force a complete re-render by temporarily hiding and showing
         const display = svg.style.display;
         svg.style.display = 'none';
+        // eslint-disable-next-line no-unused-expressions
         svg.offsetHeight; // Trigger reflow
         svg.style.display = display;
       }
     }, 5);
+  }, []);
+
+  const getCommandStack = useCallback(() => {
+    return commandStackRef.current;
   }, []);
 
   useEffect(() => {
@@ -466,10 +471,6 @@ const ConDecModeler = ({ width = '100%', height = '100%', style = {}, loadedFile
         canvas.removeEventListener('contextmenu', handleContextMenu);
       }
     };
-  }, []);
-
-  const getCommandStack = useCallback(() => {
-    return commandStackRef.current;
   }, []);
 
   const getDiagram = useCallback(() => {
