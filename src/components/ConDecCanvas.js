@@ -80,6 +80,43 @@ export const ConDecCanvas = React.forwardRef(({
 
   useImperativeHandle(ref, () => svgRef.current, []);
 
+  // Cleanup effect to remove any orphaned elements when refreshKey changes
+  useEffect(() => {
+    if (svgRef.current) {
+      // Remove any orphaned or duplicate elements
+      const svg = svgRef.current;
+      
+      // Clean up all types of ghost elements
+      const elementsToClean = [
+        '[data-cleanup="true"]',
+        '.orphaned',
+        '.ghost',
+        '.duplicate',
+        '[data-ghost="true"]',
+        // Clean up any elements that might be duplicated
+        'g[class*="duplicate"]',
+        'path[class*="duplicate"]',
+        'rect[class*="duplicate"]'
+      ];
+      
+      elementsToClean.forEach(selector => {
+        const elements = svg.querySelectorAll(selector);
+        elements.forEach(elem => elem.remove());
+      });
+      
+      // More aggressive cleanup: remove any elements without proper React keys
+      const allGroups = svg.querySelectorAll('g');
+      allGroups.forEach(group => {
+        // If a group doesn't have proper data attributes and seems orphaned
+        if (!group.getAttribute('transform') && 
+            !group.className.baseVal && 
+            !group.hasChildNodes()) {
+          group.remove();
+        }
+      });
+    }
+  }, [refreshKey]);
+
   const props = {
     diagram,
     selectedElement,
@@ -700,7 +737,7 @@ export const ConDecCanvas = React.forwardRef(({
         style={{ cursor: cursorStyle, userSelect: 'none' }}
       >
         <RelationMarkers key={`markers-${refreshKey}`} />
-        <g transform={`translate(${canvasOffset.x},${canvasOffset.y}) scale(${zoom})`}>
+        <g key={`main-group-${refreshKey}`} transform={`translate(${canvasOffset.x},${canvasOffset.y}) scale(${zoom})`}>
           {alignmentGuides.x !== null && (
             <line
               x1={alignmentGuides.x}

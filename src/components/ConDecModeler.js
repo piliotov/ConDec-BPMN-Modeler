@@ -59,8 +59,39 @@ const ConDecModeler = ({ width = '100%', height = '100%', style = {}, loadedFile
   const [naryDiamondPos, setNaryDiamondPos] = useState(null);
   const [refreshKey, setRefreshKey] = useState(0);
 
+  const forceCompleteRefresh = useCallback(() => {
+    // Clear all state that might cause rendering issues
+    setSelectedElement(null);
+    setMultiSelectedNodes([]);
+    setMultiSelectedElements({ nodes: [], relationPoints: [], naryDiamonds: [] });
+    setDraggedElement(null);
+    setNewRelation(null);
+    setMode('hand');
+    
+    // Force multiple refresh cycles to ensure cleanup
+    setRefreshKey(prev => prev + 1);
+    setTimeout(() => {
+      setRefreshKey(prev => prev + 1);
+    }, 50);
+    setTimeout(() => {
+      setRefreshKey(prev => prev + 1);
+    }, 100);
+  }, []);
+
   const refreshConDecElements = useCallback(() => {
     setRefreshKey(prev => prev + 1);
+    
+    // Additional cleanup for persistent issues
+    setTimeout(() => {
+      if (canvasRef.current) {
+        const svg = canvasRef.current;
+        // Force a complete re-render by temporarily hiding and showing
+        const display = svg.style.display;
+        svg.style.display = 'none';
+        svg.offsetHeight; // Trigger reflow
+        svg.style.display = display;
+      }
+    }, 5);
   }, []);
 
   useEffect(() => {
@@ -87,13 +118,63 @@ const ConDecModeler = ({ width = '100%', height = '100%', style = {}, loadedFile
         e.preventDefault();
         refreshConDecElements();
       }
+      // Emergency complete refresh with Ctrl+Shift+R
+      if ((e.metaKey || e.ctrlKey) && e.key === 'r' && e.shiftKey) {
+        e.preventDefault();
+        forceCompleteRefresh();
+      }
+      // Also add F5 for refresh
+      if (e.key === 'F5') {
+        e.preventDefault();
+        forceCompleteRefresh();
+      }
     };
 
     window.addEventListener('keydown', handleKeyDown);
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, [refreshConDecElements]);
+  }, [refreshConDecElements, forceCompleteRefresh]);
+
+  // Add command stack listener to refresh on command execution
+  useEffect(() => {
+    const commandStack = getCommandStack();
+    const handleCommandStackEvent = (event, command) => {
+      if (event === 'executed' || event === 'undone' || event === 'redone') {
+        const isMultiCommand = command && (
+          command.description.includes('Multiple') || 
+          command.description.includes('nodes') ||
+          command.constructor.name === 'DeleteMultipleNodesCommand' ||
+          command.constructor.name === 'MoveMultipleNodesCommand'
+        );
+        
+        // Clear potentially stale state
+        if (event === 'undone' || event === 'redone') {
+          setSelectedElement(null);
+          setMultiSelectedNodes([]);
+          setMultiSelectedElements({ nodes: [], relationPoints: [], naryDiamonds: [] });
+          setDraggedElement(null);
+        }
+        
+        // Use more aggressive refresh for multi-commands
+        if (isMultiCommand && (event === 'undone' || event === 'redone')) {
+          setTimeout(() => {
+            forceCompleteRefresh();
+          }, 30);
+        } else {
+          // Force refresh with a delay to ensure DOM updates are complete
+          setTimeout(() => {
+            refreshConDecElements();
+          }, event === 'executed' ? 5 : 25);
+        }
+      }
+    };
+    
+    commandStack.addListener(handleCommandStackEvent);
+    return () => {
+      commandStack.removeListener(handleCommandStackEvent);
+    };
+  }, [getCommandStack, refreshConDecElements, forceCompleteRefresh]);
 
   const handleMenuSizeChange = useCallback((size) => {
     if (size && size.width && size.height) {
@@ -398,16 +479,76 @@ const ConDecModeler = ({ width = '100%', height = '100%', style = {}, loadedFile
   const handleUndo = useCallback(() => {
     const commandStack = getCommandStack();
     if (commandStack.canUndo()) {
-      commandStack.undo();
+      const lastCommand = commandStack.stack[commandStack.stackIndex];
+      const isMultiCommand = lastCommand && (
+        lastCommand.description.includes('Multiple') || 
+        lastCommand.description.includes('nodes') ||
+        lastCommand.constructor.name === 'DeleteMultipleNodesCommand' ||
+        lastCommand.constructor.name === 'MoveMultipleNodesCommand'
+      );
+      
+      if (isMultiCommand) {
+        // For multi-operations, use complete refresh
+        forceCompleteRefresh();
+        setTimeout(() => {
+          commandStack.undo();
+          setTimeout(() => {
+            forceCompleteRefresh();
+          }, 50);
+        }, 20);
+      } else {
+        // Clear all selections before undo to prevent state corruption
+        setSelectedElement(null);
+        setMultiSelectedNodes([]);
+        setMultiSelectedElements({ nodes: [], relationPoints: [], naryDiamonds: [] });
+        setDraggedElement(null);
+        
+        commandStack.undo();
+        
+        // Force complete refresh after undo
+        setTimeout(() => {
+          refreshConDecElements();
+        }, 20);
+      }
     }
-  }, [getCommandStack]);
+  }, [getCommandStack, refreshConDecElements, forceCompleteRefresh]);
 
   const handleRedo = useCallback(() => {
     const commandStack = getCommandStack();
     if (commandStack.canRedo()) {
-      commandStack.redo();
+      const nextCommand = commandStack.stack[commandStack.stackIndex + 1];
+      const isMultiCommand = nextCommand && (
+        nextCommand.description.includes('Multiple') || 
+        nextCommand.description.includes('nodes') ||
+        nextCommand.constructor.name === 'DeleteMultipleNodesCommand' ||
+        nextCommand.constructor.name === 'MoveMultipleNodesCommand'
+      );
+      
+      if (isMultiCommand) {
+        // For multi-operations, use complete refresh
+        forceCompleteRefresh();
+        setTimeout(() => {
+          commandStack.redo();
+          setTimeout(() => {
+            forceCompleteRefresh();
+          }, 50);
+        }, 20);
+      } else {
+        // Clear all selections before redo to prevent state corruption
+        setSelectedElement(null);
+        setMultiSelectedNodes([]);
+        setMultiSelectedElements({ nodes: [], relationPoints: [], naryDiamonds: [] });
+        setDraggedElement(null);
+        
+        commandStack.redo();
+        
+        // Force complete refresh after redo
+        setTimeout(() => {
+          refreshConDecElements();
+        }, 20);
+      }
     }
-  }, [getCommandStack]);
+  }, [getCommandStack, refreshConDecElements, forceCompleteRefresh]);
 
   const handleDelete = useCallback(() => {
     if (!selectedElement || !diagram) return;
@@ -424,8 +565,16 @@ const ConDecModeler = ({ width = '100%', height = '100%', style = {}, loadedFile
       commandStack.execute(command);
     }
 
+    // Clear all selections immediately
     setSelectedElement(null);
-  }, [selectedElement, diagram, getCommandStack, getDiagram]);
+    setMultiSelectedNodes([]);
+    setMultiSelectedElements({ nodes: [], relationPoints: [], naryDiamonds: [] });
+    
+    // Force refresh after delete
+    setTimeout(() => {
+      refreshConDecElements();
+    }, 10);
+  }, [selectedElement, diagram, getCommandStack, getDiagram, refreshConDecElements]);
 
   const handleDeleteMultiSelected = (nodesToDelete) => {
     if (!nodesToDelete || nodesToDelete.length === 0) return;
@@ -436,7 +585,15 @@ const ConDecModeler = ({ width = '100%', height = '100%', style = {}, loadedFile
     const command = new DeleteMultipleNodesCommand(nodeIds, getDiagram, setDiagram);
     commandStack.execute(command);
     
+    // Clear all selections immediately
     setMultiSelectedNodes([]);
+    setMultiSelectedElements({ nodes: [], relationPoints: [], naryDiamonds: [] });
+    setSelectedElement(null);
+    
+    // Force refresh after delete
+    setTimeout(() => {
+      refreshConDecElements();
+    }, 10);
   };
 
   const handleDeleteMultiSelectedExtended = (selectedElements) => {
@@ -459,8 +616,15 @@ const ConDecModeler = ({ width = '100%', height = '100%', style = {}, loadedFile
       commandStack.execute(relationCommand);
     });
     
+    // Clear all selections immediately
     setMultiSelectedNodes([]);
     setMultiSelectedElements({ nodes: [], relationPoints: [], naryDiamonds: [] });
+    setSelectedElement(null);
+    
+    // Force refresh after delete
+    setTimeout(() => {
+      refreshConDecElements();
+    }, 10);
   };
 
   useEffect(() => {
@@ -725,7 +889,14 @@ const ConDecModeler = ({ width = '100%', height = '100%', style = {}, loadedFile
   };
 
   const handleRelationEdit = updatedRelations => {
-    setDiagram(prev => ({ ...prev, relations: updatedRelations }));
+    setDiagram(prev => ({ 
+      ...prev, 
+      relations: updatedRelations 
+    }));
+    // Force refresh to prevent trace artifacts
+    setTimeout(() => {
+      refreshConDecElements();
+    }, 5);
   };
   
   const handleAppendActivity = useCallback((node) => {
@@ -1214,7 +1385,21 @@ const ConDecModeler = ({ width = '100%', height = '100%', style = {}, loadedFile
           onSelectElement={handleElementSelect}
           onNodeRename={handleNodeRename}
           onRelationCreate={handleRelationCreate}
-          onNodeEdit={updatedNodes => setDiagram({ ...diagram, nodes: updatedNodes })}
+          onNodeEdit={updatedNodes => {
+            // Update relations when nodes are moved
+            const updatedRelations = diagram.relations.map(relation => {
+              const sourceNode = updatedNodes.find(n => n.id === relation.sourceId);
+              const targetNode = updatedNodes.find(n => n.id === relation.targetId);
+              if (sourceNode || targetNode) {
+                // If either source or target node was moved, update the relation
+                const tempDiagram = { nodes: updatedNodes, relations: [relation] };
+                const updatedRelation = require('../utils/relations/relationUtils').updateRelationWaypoints(relation, tempDiagram);
+                return updatedRelation;
+              }
+              return relation;
+            });
+            setDiagram({ ...diagram, nodes: updatedNodes, relations: updatedRelations });
+          }}
           onRelationEdit={handleRelationEdit}
           newRelation={newRelation}
           setNewRelation={setNewRelation}

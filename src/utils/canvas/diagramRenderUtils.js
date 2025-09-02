@@ -183,7 +183,7 @@ export const renderDiagramElements = ({
           };
     return (
       <ConDecRelation
-        key={`relation-${relation.id}-${isSelected ? 'selected' : 'unselected'}`}
+        key={`relation-${relation.id}-${isSelected ? 'selected' : 'unselected'}-${relation.waypoints ? relation.waypoints.length : 0}-${sourceNode.x}-${sourceNode.y}-${targetNode.x}-${targetNode.y}`}
         relation={relation}
         sourceNode={sourceNode}
         targetNode={targetNode}
@@ -210,8 +210,9 @@ export const renderDiagramElements = ({
     const isMultiSelected = multiSelectedNodes && multiSelectedNodes.find(n => n.id === node.id);
     const isNarySelected = narySelectedNodes && narySelectedNodes.includes(node.id);
     return (
-      <React.Fragment key={node.id}>
+      <React.Fragment key={`node-fragment-${node.id}-${node.x}-${node.y}`}>
         <ConDecNode
+          key={`node-${node.id}-${node.x}-${node.y}-${isSelected ? 'selected' : 'unselected'}-${isMultiSelected ? 'multi' : 'single'}`}
           node={node}
           isSelected={isSelected}
           isMultiSelected={!!isMultiSelected}

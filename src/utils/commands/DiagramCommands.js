@@ -115,9 +115,17 @@ export class MoveNodeCommand extends Command {
     const updatedNodes = currentDiagram.nodes.map(n =>
       n.id === this.nodeId ? { ...n, x: this.newPosition.x, y: this.newPosition.y } : n
     );
+    
+    // Update relations when node is moved
+    const { updateRelationsForNode } = require('../relations/relationUtils');
+    const movedNode = updatedNodes.find(n => n.id === this.nodeId);
+    const tempDiagram = { nodes: updatedNodes, relations: currentDiagram.relations };
+    const updatedRelations = updateRelationsForNode(movedNode, tempDiagram);
+    
     this.setDiagram({
       ...currentDiagram,
-      nodes: updatedNodes
+      nodes: updatedNodes,
+      relations: updatedRelations
     });
   }
   undo() {
@@ -125,9 +133,17 @@ export class MoveNodeCommand extends Command {
     const updatedNodes = currentDiagram.nodes.map(n =>
       n.id === this.nodeId ? { ...n, x: this.originalPosition.x, y: this.originalPosition.y } : n
     );
+    
+    // Update relations when node is moved back to original position
+    const { updateRelationsForNode } = require('../relations/relationUtils');
+    const movedNode = updatedNodes.find(n => n.id === this.nodeId);
+    const tempDiagram = { nodes: updatedNodes, relations: currentDiagram.relations };
+    const updatedRelations = updateRelationsForNode(movedNode, tempDiagram);
+    
     this.setDiagram({
       ...currentDiagram,
-      nodes: updatedNodes
+      nodes: updatedNodes,
+      relations: updatedRelations
     });
   }
 }
@@ -152,9 +168,24 @@ export class MoveMultipleNodesCommand extends Command {
       const update = this.nodeUpdates.find(u => u.id === node.id);
       return update ? { ...node, x: update.x, y: update.y } : node;
     });
+    
+    // Update relations when nodes are moved
+    const { updateRelationsForNode } = require('../relations/relationUtils');
+    let updatedRelations = currentDiagram.relations;
+    
+    // Update relations for each moved node
+    this.nodeUpdates.forEach(update => {
+      const movedNode = updatedNodes.find(n => n.id === update.id);
+      if (movedNode) {
+        const tempDiagram = { nodes: updatedNodes, relations: updatedRelations };
+        updatedRelations = updateRelationsForNode(movedNode, tempDiagram);
+      }
+    });
+    
     this.setDiagram({
       ...currentDiagram,
-      nodes: updatedNodes
+      nodes: updatedNodes,
+      relations: updatedRelations
     });
   }
   undo() {
@@ -163,9 +194,24 @@ export class MoveMultipleNodesCommand extends Command {
       const originalPos = this.originalPositions[node.id];
       return originalPos ? { ...node, x: originalPos.x, y: originalPos.y } : node;
     });
+    
+    // Update relations when nodes are moved back to original positions
+    const { updateRelationsForNode } = require('../relations/relationUtils');
+    let updatedRelations = currentDiagram.relations;
+    
+    // Update relations for each node that was moved back
+    Object.keys(this.originalPositions).forEach(nodeId => {
+      const movedNode = updatedNodes.find(n => n.id === nodeId);
+      if (movedNode) {
+        const tempDiagram = { nodes: updatedNodes, relations: updatedRelations };
+        updatedRelations = updateRelationsForNode(movedNode, tempDiagram);
+      }
+    });
+    
     this.setDiagram({
       ...currentDiagram,
-      nodes: updatedNodes
+      nodes: updatedNodes,
+      relations: updatedRelations
     });
   }
 }
@@ -378,6 +424,7 @@ export class DeleteMultipleNodesCommand extends Command {
     this.nodeIds = [...nodeIds];
     this.getDiagram = getDiagram;
     this.setDiagram = setDiagram;
+    this.previousDiagram = null;
     const diagram = getDiagram();
     this.deletedNodes = [];
     this.deletedRelations = [];
@@ -400,6 +447,10 @@ export class DeleteMultipleNodesCommand extends Command {
       !this.nodeIds.includes(relation.sourceId) && 
       !this.nodeIds.includes(relation.targetId)
     );
+    
+    // Store a complete snapshot for proper undo
+    this.previousDiagram = JSON.parse(JSON.stringify(currentDiagram));
+    
     this.setDiagram({
       ...currentDiagram,
       nodes: updatedNodes,
@@ -407,11 +458,17 @@ export class DeleteMultipleNodesCommand extends Command {
     });
   }
   undo() {
-    const currentDiagram = this.getDiagram();
-    this.setDiagram({
-      ...currentDiagram,
-      nodes: [...currentDiagram.nodes, ...this.deletedNodes],
-      relations: [...currentDiagram.relations, ...this.deletedRelations]
-    });
+    // Restore complete previous state for better consistency
+    if (this.previousDiagram) {
+      this.setDiagram(this.previousDiagram);
+    } else {
+      // Fallback to original method
+      const currentDiagram = this.getDiagram();
+      this.setDiagram({
+        ...currentDiagram,
+        nodes: [...currentDiagram.nodes, ...this.deletedNodes],
+        relations: [...currentDiagram.relations, ...this.deletedRelations]
+      });
+    }
   }
 }
